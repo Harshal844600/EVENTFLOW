@@ -1,26 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --charcoal: #171e19;
+  --dark-gray: #272727;
+  --sage: #b7c6c2;
+  --white: #ffffff;
+  --yellow: #ffe17c;
+
+  /* Semantic Variables (Light Mode) */
+  --background: var(--white);
+  --background-rgb: 255, 255, 255;
+  --foreground: var(--charcoal);
+  --card-bg: var(--white);
+  --card-border: rgba(23, 30, 25, 0.1);
+  --primary: var(--yellow);
+  --secondary: var(--sage);
+  --inverted-bg: var(--charcoal);
+  --inverted-text: var(--white);
+  
+  --grid-pattern-color: #b7c6c220;
+}
+
+.dark {
+  /* Semantic Variables (Dark Mode) */
+  --background: var(--charcoal);
+  --background-rgb: 23, 30, 25;
+  --foreground: var(--white);
+  --card-bg: #1c241e; /* Slightly lighter than charcoal */
+  --card-border: rgba(183, 198, 194, 0.1);
+  --primary: var(--yellow);
+  --secondary: var(--sage);
+  --inverted-bg: var(--white);
+  --inverted-text: var(--charcoal);
+  
+  --grid-pattern-color: rgba(183,198,194,0.05);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-inverted-bg: var(--inverted-bg);
+  --color-inverted-text: var(--inverted-text);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-charcoal: var(--charcoal);
+  --color-dark-gray: var(--dark-gray);
+  --color-sage: var(--sage);
+  --color-white: var(--white);
+  --color-yellow: var(--yellow);
+
+  --font-anton: 'Anton', sans-serif;
+  --font-satoshi: 'Satoshi', sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-satoshi);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+.bg-grid-pattern {
+  background-image: linear-gradient(to right, var(--grid-pattern-color) 1px, transparent 1px),
+                    linear-gradient(to bottom, var(--grid-pattern-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Card hover transitions from the prompt */
+.card-hover {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+    filter: drop-shadow(0 0 5px rgba(255, 225, 124, 0.1)); 
+  }
+  50% { 
+    opacity: 0.9; 
+    transform: scale(1.03); 
+    filter: drop-shadow(0 0 20px rgba(255, 225, 124, 0.7)); 
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Staggering utility classes */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Glassmorphism Card Panels */
+.glass-card {
+  background: rgba(var(--background-rgb), 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+}
+.glass-card-hover {
+  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-4px);
+  background: rgba(var(--background-rgb), 0.85);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1), 0 20px 40px -20px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 225, 124, 0.3);
+}
+
+/* Smooth transitions */
+.transition-theme {
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Ticket Dispenser Animations */
+@keyframes ticket-dispense {
+  0% {
+    transform: translateY(-105%);
+    opacity: 0.3;
+  }
+  60% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-6px);
+  }
+  90% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-ticket-dispense {
+  animation: ticket-dispense 1.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animation-delay-150 { animation-delay: 150ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+.animation-delay-450 { animation-delay: 450ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+
+
