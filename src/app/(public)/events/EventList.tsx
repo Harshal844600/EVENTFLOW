@@ -87,17 +87,17 @@ export function EventList({ events }: { events: any[] }) {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2.5 justify-center">
+        <div className="flex overflow-x-auto no-scrollbar sm:flex-wrap gap-2 sm:gap-2.5 sm:justify-center pb-2 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0">
           {categories.map((category) => {
             const isActive = selectedCategory === category;
             return (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`relative px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 border cursor-pointer hover:scale-[1.03] active:scale-[0.97] ${
+                className={`shrink-0 relative px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 border cursor-pointer hover:scale-[1.03] active:scale-[0.97] touch-manipulation ${
                   isActive
-                    ? "bg-primary text-foreground border-transparent shadow-md shadow-primary/20"
-                    : "bg-card-bg/20 text-foreground/85 border-card-border/50 hover:bg-card-bg/50 hover:text-foreground"
+                    ? "bg-primary text-charcoal border-transparent shadow-md shadow-primary/20"
+                    : "bg-card-bg/40 text-foreground/85 border-card-border/50 hover:bg-card-bg/70 hover:text-foreground"
                 }`}
               >
                 {category}

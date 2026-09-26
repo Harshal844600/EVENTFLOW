@@ -69,7 +69,7 @@ export function LiveBookingToast() {
   }, [current]);
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 pointer-events-none max-w-sm w-full">
+    <div className="fixed bottom-4 left-3 right-3 sm:right-auto sm:bottom-6 sm:left-6 z-50 pointer-events-none max-w-[calc(100vw-24px)] sm:max-w-sm w-full">
       <AnimatePresence>
         {current && !dismissed && (
           <motion.div

@@ -186,7 +186,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
   const isSoldOut = liveSeatsRemaining !== null && liveSeatsRemaining <= 0;
 
   return (
-    <div className="max-w-2xl mx-auto py-10 space-y-6 px-4">
+    <div className="max-w-2xl mx-auto py-6 sm:py-10 space-y-6 px-3.5 sm:px-4 pb-20">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
 
       {/* Navigation Header */}
@@ -207,7 +207,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       </div>
 
       <div className="text-center md:text-left space-y-1">
-        <h1 className="font-anton text-4xl md:text-5xl uppercase text-foreground">
+        <h1 className="font-anton text-3xl sm:text-4xl md:text-5xl uppercase text-foreground">
           Express Checkout
         </h1>
         <p className="text-secondary text-sm">
@@ -298,18 +298,20 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1 || isSoldOut}
-                  className="w-9 h-9 rounded-xl border border-card-border flex items-center justify-center font-bold text-lg text-foreground hover:bg-primary hover:text-charcoal transition-all disabled:opacity-30 active:scale-90"
+                  aria-label="Decrease quantity"
+                  className="w-11 h-11 rounded-xl border border-card-border flex items-center justify-center font-bold text-xl text-foreground hover:bg-primary hover:text-charcoal transition-all disabled:opacity-30 active:scale-90 touch-manipulation"
                 >
                   -
                 </button>
-                <span className="font-anton text-2xl w-6 text-center text-foreground">
+                <span className="font-anton text-2xl w-8 text-center text-foreground">
                   {quantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.min(maxAllowedQuantity, quantity + 1))}
                   disabled={quantity >= maxAllowedQuantity || isSoldOut}
-                  className="w-9 h-9 rounded-xl border border-card-border flex items-center justify-center font-bold text-lg text-foreground hover:bg-primary hover:text-charcoal transition-all disabled:opacity-30 active:scale-90"
+                  aria-label="Increase quantity"
+                  className="w-11 h-11 rounded-xl border border-card-border flex items-center justify-center font-bold text-xl text-foreground hover:bg-primary hover:text-charcoal transition-all disabled:opacity-30 active:scale-90 touch-manipulation"
                 >
                   +
                 </button>
