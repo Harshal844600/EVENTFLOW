@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Magnetic } from "./Magnetic";
+import { EventFlowLogo } from "./EventFlowLogo";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,8 +13,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Logo & Slogan */}
           <div className="md:col-span-2 space-y-6">
-            <Link href="/" className="font-anton text-4xl uppercase tracking-wide inline-block">
-              EventFlow<span className="text-primary animate-pulse-glow">.</span>
+            <Link href="/" className="font-anton text-3xl sm:text-4xl uppercase tracking-wide flex items-center gap-3 group">
+              <EventFlowLogo size={42} className="transition-transform duration-300 group-hover:scale-105" />
+              <span>EventFlow<span className="text-primary animate-pulse-glow">.</span></span>
             </Link>
             <p className="text-foreground/70 max-w-sm text-base leading-relaxed">
               EventFlow is the next generation event management platform. Discover curated experiences, handle ticketing, and host events at scale with modern speed.

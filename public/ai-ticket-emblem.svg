@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" width="100%" height="100%">
+  <defs>
+    <!-- Primary Gold Radiant Gradient -->
+    <linearGradient id="efGoldGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#FFF5B8" />
+      <stop offset="35%" stop-color="#FFE17C" />
+      <stop offset="70%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+
+    <!-- Electric Cyan/Teal AI Neural Flow Gradient -->
+    <linearGradient id="efFlowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="45%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+
+    <!-- Deep Metallic Obsidian Gradient -->
+    <linearGradient id="efCardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#232C26" />
+      <stop offset="50%" stop-color="#171E19" />
+      <stop offset="100%" stop-color="#0E1310" />
+    </linearGradient>
+
+    <!-- Outer Glow Filter -->
+    <filter id="efGlow" x="-30%" y="-30%" width="160%" height="160%" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="glow" />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Intense Center Core Flare -->
+    <radialGradient id="efCoreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="25%" stop-color="#FFE17C" stop-opacity="0.7" />
+      <stop offset="60%" stop-color="#06B6D4" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#171E19" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="efAmbientAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFE17C" stop-opacity="0.25" />
+      <stop offset="50%" stop-color="#06B6D4" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#171E19" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Ambient Backdrop Aura -->
+  <circle cx="60" cy="60" r="54" fill="url(#efAmbientAura)" />
+
+  <!-- Outer Isometric Ticket Shield Frame -->
+  <g filter="url(#efGlow)">
+    <!-- Base Ticket Plate with Chamfered Side Notches -->
+    <path
+      d="M 26 22 
+         C 26 14 32 8 40 8 
+         L 80 8 
+         C 88 8 94 14 94 22 
+         L 94 48 
+         C 88 48 83 53 83 60 
+         C 83 67 88 72 94 72 
+         L 94 98 
+         C 94 106 88 112 80 112 
+         L 40 112 
+         C 32 112 26 106 26 98 
+         L 26 72 
+         C 32 72 37 67 37 60 
+         C 37 53 32 48 26 48 
+         Z"
+      fill="url(#efCardBg)"
+      stroke="url(#efGoldGrad)"
+      stroke-width="2.5"
+      stroke-linejoin="round"
+    />
+
+    <!-- Inner Ticket Neon Border Inset -->
+    <path
+      d="M 32 25 
+         C 32 20 36 16 42 16 
+         L 78 16 
+         C 84 16 88 20 88 25 
+         L 88 46 
+         C 81 48 77 53.5 77 60 
+         C 77 66.5 81 72 88 74 
+         L 88 95 
+         C 88 100 84 104 78 104 
+         L 42 104 
+         C 36 104 32 100 32 95 
+         L 32 74 
+         C 39 72 43 66.5 43 60 
+         C 43 53.5 39 48 32 46 
+         Z"
+      fill="none"
+      stroke="url(#efFlowGrad)"
+      stroke-width="1.2"
+      stroke-opacity="0.6"
+      stroke-dasharray="3 3"
+    />
+  </g>
+
+  <!-- Flowing AI Frequency Curves (Event Sound & Flow Lines) -->
+  <g opacity="0.85">
+    <path
+      d="M 36 34 Q 60 44 84 34"
+      fill="none"
+      stroke="url(#efGoldGrad)"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      opacity="0.6"
+    />
+    <path
+      d="M 36 86 Q 60 76 84 86"
+      fill="none"
+      stroke="url(#efGoldGrad)"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      opacity="0.6"
+    />
+  </g>
+
+  <!-- Orbital AI Neural Rings (Tilted Ellipses) -->
+  <g transform="rotate(-25 60 60)">
+    <ellipse
+      cx="60"
+      cy="60"
+      rx="34"
+      ry="13"
+      fill="none"
+      stroke="url(#efGoldGrad)"
+      stroke-width="1.6"
+      stroke-dasharray="8 4 2 4"
+      opacity="0.8"
+    />
+    <circle cx="94" cy="60" r="2.5" fill="#FFE17C" />
+    <circle cx="26" cy="60" r="2" fill="#06B6D4" />
+  </g>
+
+  <g transform="rotate(25 60 60)">
+    <ellipse
+      cx="60"
+      cy="60"
+      rx="34"
+      ry="13"
+      fill="none"
+      stroke="url(#efFlowGrad)"
+      stroke-width="1.6"
+      stroke-dasharray="5 5"
+      opacity="0.75"
+    />
+    <circle cx="60" cy="47" r="2" fill="#FFE17C" />
+    <circle cx="60" cy="73" r="2.5" fill="#10B981" />
+  </g>
+
+  <!-- Central Radial Core Aura -->
+  <circle cx="60" cy="60" r="22" fill="url(#efCoreGlow)" />
+
+  <!-- Hyper-Radiant 4-Point AI Spark Star -->
+  <path
+    d="M 60 38 
+       C 60 50 50 60 38 60 
+       C 50 60 60 70 60 82 
+       C 60 70 70 60 82 60 
+       C 70 60 60 50 60 38 
+       Z"
+    fill="url(#efGoldGrad)"
+    filter="url(#efGlow)"
+  />
+
+  <!-- High-Energy Micro Spark (Rotated 45deg) -->
+  <path
+    d="M 60 47 
+       C 60 55 55 60 47 60 
+       C 55 60 60 65 60 73 
+       C 60 65 65 60 73 60 
+       C 65 60 60 55 60 47 
+       Z"
+    fill="#FFFFFF"
+    opacity="0.9"
+  />
+
+  <!-- Neural Constellation Spark Nodes -->
+  <circle cx="60" cy="60" r="3" fill="#FFFFFF" />
+  <circle cx="48" cy="48" r="1.5" fill="#FFE17C" opacity="0.85" />
+  <circle cx="72" cy="48" r="1.5" fill="#06B6D4" opacity="0.85" />
+  <circle cx="48" cy="72" r="1.5" fill="#10B981" opacity="0.85" />
+  <circle cx="72" cy="72" r="1.5" fill="#FFE17C" opacity="0.85" />
+</svg>

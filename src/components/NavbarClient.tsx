@@ -9,6 +9,7 @@ import { Magnetic } from "./Magnetic";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { Menu, X, Calendar, Info, Shield, ArrowRight } from "lucide-react";
 import React from "react";
+import { EventFlowLogo } from "./EventFlowLogo";
 
 interface NavbarClientProps {
   isAdmin: boolean;
@@ -63,8 +64,9 @@ export function NavbarClient({ isAdmin, hasUser, userMenuNode }: NavbarClientPro
 
         {/* Brand Logo */}
         <Magnetic strength={15}>
-          <Link href="/" className="font-anton text-2xl sm:text-3xl uppercase tracking-wide flex items-center">
-            EventFlow<span className="text-primary animate-pulse-glow">.</span>
+          <Link href="/" className="font-anton text-2xl sm:text-3xl uppercase tracking-wide flex items-center group">
+            <EventFlowLogo size={32} className="mr-2.5 transition-transform duration-300 group-hover:scale-105" />
+            <span>EventFlow<span className="text-primary animate-pulse-glow">.</span></span>
           </Link>
         </Magnetic>
 
@@ -190,9 +192,10 @@ export function NavbarClient({ isAdmin, hasUser, userMenuNode }: NavbarClientPro
                 <Link
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="font-anton text-2xl uppercase tracking-wide"
+                  className="font-anton text-2xl uppercase tracking-wide flex items-center gap-2"
                 >
-                  EventFlow<span className="text-primary">.</span>
+                  <EventFlowLogo size={28} />
+                  <span>EventFlow<span className="text-primary">.</span></span>
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}

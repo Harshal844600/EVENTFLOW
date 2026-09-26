@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Magnetic } from "@/components/Magnetic";
+import { EventFlowLogo } from "@/components/EventFlowLogo";
 
 export function HeroSection() {
   const { scrollY } = useScroll();
@@ -43,6 +44,20 @@ export function HeroSection() {
       {/* Dynamic Background Glow Blobs */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-primary/10 blur-[100px] -z-10 animate-float pointer-events-none" />
       <div className="absolute top-1/2 left-1/4 w-72 h-72 rounded-full bg-secondary/10 blur-[120px] -z-10 animate-float pointer-events-none delay-500" />
+
+      {/* AI Intelligence Brandmark Badge */}
+      <motion.div
+        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-card-border bg-card-bg/70 backdrop-blur-md shadow-lg hover:border-primary/40 transition-colors group cursor-default"
+      >
+        <EventFlowLogo size={22} animated={true} />
+        <span className="text-xs uppercase tracking-widest font-bold text-foreground/80 font-mono flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+          AI-Powered Event Intelligence
+        </span>
+      </motion.div>
 
       {/* Main Title Heading */}
       <motion.h1
