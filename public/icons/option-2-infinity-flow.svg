@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" width="100%" height="100%">
+  <defs>
+    <linearGradient id="opt2Gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF9C4" />
+      <stop offset="40%" stop-color="#FFE17C" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <linearGradient id="opt2Flow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="60%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    <radialGradient id="opt2Aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#FFE17C" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#171E19" stop-opacity="0" />
+    </radialGradient>
+    <filter id="opt2Glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Base Container -->
+  <rect x="8" y="8" width="84" height="84" rx="24" fill="#151D18" stroke="url(#opt2Gold)" stroke-width="1.8" />
+  <circle cx="50" cy="50" r="38" fill="url(#opt2Aura)" />
+
+  <!-- Infinity Flow Waves (Intertwined Dynamic Ribbon) -->
+  <g filter="url(#opt2Glow)">
+    <!-- First Wave Loop (Event Wave) -->
+    <path
+      d="M 24 50 
+         C 24 35 38 24 52 32 
+         C 64 40 68 56 76 64 
+         C 84 72 90 64 86 52 
+         C 82 40 70 34 62 42"
+      fill="none"
+      stroke="url(#opt2Gold)"
+      stroke-width="5"
+      stroke-linecap="round"
+    />
+
+    <!-- Second Intersecting Flow Loop (AI Flow) -->
+    <path
+      d="M 76 50 
+         C 76 65 62 76 48 68 
+         C 36 60 32 44 24 36 
+         C 16 28 10 36 14 48 
+         C 18 60 30 66 38 58"
+      fill="none"
+      stroke="url(#opt2Flow)"
+      stroke-width="5"
+      stroke-linecap="round"
+    />
+  </g>
+
+  <!-- Connecting AI Synapse Nodes -->
+  <circle cx="50" cy="50" r="4.5" fill="#FFFFFF" />
+  <circle cx="50" cy="50" r="2.5" fill="#171E19" />
+  <circle cx="28" cy="40" r="2.5" fill="#FFE17C" />
+  <circle cx="72" cy="60" r="2.5" fill="#06B6D4" />
+  <circle cx="68" cy="38" r="2" fill="#10B981" />
+  <circle cx="32" cy="62" r="2" fill="#F59E0B" />
+</svg>

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" width="100%" height="100%">
+  <defs>
+    <linearGradient id="opt3GoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="50%" stop-color="#FFE17C" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <linearGradient id="opt3GoldDark" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFE17C" />
+      <stop offset="60%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#92400E" />
+    </linearGradient>
+    <linearGradient id="opt3CyanFacet" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="opt3HexBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#26332A" />
+      <stop offset="60%" stop-color="#171E19" />
+      <stop offset="100%" stop-color="#0A0E0C" />
+    </linearGradient>
+    <radialGradient id="opt3CoreFlare" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9" />
+      <stop offset="35%" stop-color="#FFE17C" stop-opacity="0.6" />
+      <stop offset="80%" stop-color="#06B6D4" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#171E19" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Hexagonal Shield Crest -->
+  <polygon
+    points="50,6 88,27 88,73 50,94 12,73 12,27"
+    fill="url(#opt3HexBg)"
+    stroke="url(#opt3GoldLight)"
+    stroke-width="2.2"
+    stroke-linejoin="round"
+  />
+
+  <circle cx="50" cy="50" r="32" fill="url(#opt3CoreFlare)" />
+
+  <!-- 8-Point Faceted Refractive Prism Spark -->
+  <!-- Top Vertex Facets -->
+  <polygon points="50,18 50,50 42,42" fill="url(#opt3GoldLight)" />
+  <polygon points="50,18 58,42 50,50" fill="url(#opt3GoldDark)" />
+
+  <!-- Right Vertex Facets -->
+  <polygon points="82,50 50,50 58,42" fill="url(#opt3GoldLight)" />
+  <polygon points="82,50 58,58 50,50" fill="url(#opt3CyanFacet)" />
+
+  <!-- Bottom Vertex Facets -->
+  <polygon points="50,82 50,50 58,58" fill="url(#opt3GoldDark)" />
+  <polygon points="50,82 42,58 50,50" fill="url(#opt3CyanFacet)" />
+
+  <!-- Left Vertex Facets -->
+  <polygon points="18,50 50,50 42,58" fill="url(#opt3GoldDark)" />
+  <polygon points="18,50 42,42 50,50" fill="url(#opt3GoldLight)" />
+
+  <!-- Diagonal Sub-Sparks -->
+  <polygon points="28,28 50,50 42,42" fill="url(#opt3CyanFacet)" opacity="0.9" />
+  <polygon points="72,28 50,50 58,42" fill="#FFE17C" opacity="0.9" />
+  <polygon points="72,72 50,50 58,58" fill="url(#opt3CyanFacet)" opacity="0.9" />
+  <polygon points="28,72 50,50 42,58" fill="#FFE17C" opacity="0.9" />
+
+  <!-- Center Diamond Quantum Core -->
+  <polygon points="50,44 56,50 50,56 44,50" fill="#FFFFFF" />
+  <circle cx="50" cy="50" r="1.5" fill="#171E19" />
+</svg>
