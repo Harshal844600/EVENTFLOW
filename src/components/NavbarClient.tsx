@@ -70,8 +70,8 @@ export function NavbarClient({ isAdmin, hasUser, userMenuNode }: NavbarClientPro
           </Link>
         </Magnetic>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8 font-bold">
+        {/* Desktop Navigation (Perfect Center Alignment) */}
+        <nav className="hidden md:flex items-center space-x-8 font-bold absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <Magnetic strength={15}>
             <Link 
               href="/events" 
