@@ -15,6 +15,8 @@ export default async function PublicEventsPage() {
       endTime: true,
       bannerUrl: true,
       price: true,
+      capacity: true,
+      seatsBooked: true,
       createdAt: true,
     },
   });

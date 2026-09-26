@@ -5,6 +5,7 @@ import { AmbientBackground } from "@/components/AmbientBackground";
 import { Toaster } from "sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { LiveBookingToast } from "@/components/LiveBookingToast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,6 +40,7 @@ export default function RootLayout({
               {children}
             </SmoothScroll>
             <Toaster position="bottom-right" theme="system" richColors />
+            <LiveBookingToast />
           </ThemeProvider>
         </body>
       </html>

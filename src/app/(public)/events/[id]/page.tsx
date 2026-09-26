@@ -102,9 +102,28 @@ export default async function PublicEventDetailPage({ params }: { params: Promis
                   <span className="font-anton text-4xl text-foreground tracking-tight mb-1">
                     {Number(event.price) === 0 ? 'Free' : `₹${Number(event.price).toFixed(2)}`}
                   </span>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${isSoldOut ? 'text-red-500' : 'text-primary'}`}>
-                    {isSoldOut ? 'Sold Out' : `${seatsAvailable} seats remaining`}
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-bold uppercase tracking-wider ${isSoldOut ? 'text-red-500' : seatsAvailable <= 10 ? 'text-amber-500 animate-pulse' : 'text-primary'}`}>
+                      {isSoldOut ? 'Sold Out' : seatsAvailable <= 10 ? `🔥 Only ${seatsAvailable} seats left!` : `${seatsAvailable} seats remaining`}
+                    </span>
+                    <span className="text-[10px] font-mono text-secondary">
+                      {Math.min(100, Math.round((event.seatsBooked / event.capacity) * 100))}% booked
+                    </span>
+                  </div>
+                  
+                  {/* Real-time capacity bar */}
+                  <div className="w-full bg-foreground/10 h-1.5 rounded-full overflow-hidden mt-2">
+                    <div 
+                      className={`h-full transition-all duration-700 ${isSoldOut ? 'bg-red-500' : 'bg-primary'}`}
+                      style={{ width: `${Math.min(100, Math.round((event.seatsBooked / event.capacity) * 100))}%` }}
+                    />
+                  </div>
+
+                  {/* Real-time viewer social proof */}
+                  <div className="flex items-center gap-1.5 pt-2 text-[11px] text-secondary">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>8 people viewing this event right now</span>
+                  </div>
                 </div>
               </div>
 

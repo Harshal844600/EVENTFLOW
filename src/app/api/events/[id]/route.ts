@@ -38,6 +38,21 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const resolvedParams = await params;
     const data = await req.json();
 
+    let startTime = undefined;
+    if (data.startTime !== undefined) {
+      const d = new Date(data.startTime);
+      startTime = isNaN(d.getTime()) ? undefined : d;
+    }
+
+    let endTime = undefined;
+    if (data.endTime !== undefined) {
+      const d = new Date(data.endTime);
+      endTime = isNaN(d.getTime()) ? undefined : d;
+    }
+
+    const price = data.price !== undefined ? (isNaN(Number(data.price)) ? 0 : Number(data.price)) : undefined;
+    const capacity = data.capacity !== undefined ? (isNaN(parseInt(String(data.capacity), 10)) ? 100 : parseInt(String(data.capacity), 10)) : undefined;
+
     const updatedEvent = await prisma.event.update({
       where: { id: resolvedParams.id },
       data: {
@@ -45,10 +60,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         description: data.description !== undefined ? data.description : undefined,
         category: data.category !== undefined ? data.category : undefined,
         venue: data.venue !== undefined ? data.venue : undefined,
-        startTime: data.startTime ? new Date(data.startTime) : undefined,
-        endTime: data.endTime ? new Date(data.endTime) : undefined,
-        price: data.price !== undefined ? data.price : undefined,
-        capacity: data.capacity !== undefined ? data.capacity : undefined,
+        startTime,
+        endTime,
+        price,
+        capacity,
         status: data.status !== undefined ? data.status : undefined,
         bannerUrl: data.bannerUrl !== undefined ? data.bannerUrl : undefined,
       },
@@ -65,9 +80,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     });
 
     return NextResponse.json(updatedEvent);
-  } catch (error) {
+  } catch (error: any) {
     console.error("PUT /api/events/[id] error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }
 

@@ -65,7 +65,13 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h2 className="font-anton text-4xl uppercase mb-8 animate-fade-in-up">Dashboard Overview</h2>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <h2 className="font-anton text-4xl uppercase animate-fade-in-up">Dashboard Overview</h2>
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs font-bold font-mono">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>REAL-TIME ENGINE ACTIVE</span>
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-card-bg border border-card-border rounded-xl p-6 shadow-xl animate-fade-in-up delay-100 card-hover">

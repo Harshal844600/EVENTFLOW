@@ -36,18 +36,24 @@ export async function POST(req: Request) {
 
     const data = await req.json();
 
+    const parsedStartTime = data.startTime ? new Date(data.startTime) : new Date();
+    const parsedEndTime = data.endTime ? new Date(data.endTime) : new Date(Date.now() + 2 * 60 * 60 * 1000);
+
+    const price = isNaN(Number(data.price)) ? 0 : Number(data.price);
+    const capacity = isNaN(parseInt(String(data.capacity), 10)) ? 100 : parseInt(String(data.capacity), 10);
+
     const newEvent = await prisma.event.create({
       data: {
-        title: data.title,
-        description: data.description,
-        category: data.category,
-        venue: data.venue,
-        startTime: new Date(data.startTime),
-        endTime: new Date(data.endTime),
-        price: data.price,
-        capacity: data.capacity,
+        title: data.title || "Untitled Event",
+        description: data.description || "",
+        category: data.category || "Technology",
+        venue: data.venue || "Virtual",
+        startTime: isNaN(parsedStartTime.getTime()) ? new Date() : parsedStartTime,
+        endTime: isNaN(parsedEndTime.getTime()) ? new Date(Date.now() + 2 * 60 * 60 * 1000) : parsedEndTime,
+        price,
+        capacity,
         status: data.status || "DRAFT",
-        bannerUrl: data.bannerUrl,
+        bannerUrl: data.bannerUrl || null,
         createdById: dbUser.id,
       },
     });
@@ -63,8 +69,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newEvent, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("POST /api/events error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

@@ -28,6 +28,28 @@ function FormattedDate({ date }: { date: string }) {
 export function EventList({ events }: { events: any[] }) {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
+  const [liveSeats, setLiveSeats] = useState<Record<string, { seatsAvailable: number; percentBooked: number; isSoldOut: boolean }>>({});
+
+  useEffect(() => {
+    // Initial and periodic real-time sync of seat levels
+    const syncLiveSeats = async () => {
+      try {
+        const res = await fetch("/api/events/live-feed");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.seats) {
+            setLiveSeats(data.seats);
+          }
+        }
+      } catch (err) {
+        // Silent network retry
+      }
+    };
+
+    syncLiveSeats();
+    const interval = setInterval(syncLiveSeats, 15_000); // 15s live sync
+    return () => clearInterval(interval);
+  }, []);
 
   const categories = ["ALL", ...Array.from(new Set(events.map((e) => e.category.toUpperCase()))).filter(cat => cat !== "ALL")];
 
@@ -131,9 +153,50 @@ export function EventList({ events }: { events: any[] }) {
                       <h3 className="font-anton text-3xl uppercase leading-tight mb-2 group-hover:text-primary transition-colors tracking-wide">
                         {event.title}
                       </h3>
-                      <p className="text-foreground/70 text-sm mb-4 line-clamp-2 font-satoshi flex-1 leading-relaxed">
-                        {event.description}
-                      </p>
+                      {/* Real-time live seat tracking indicator */}
+                      {(() => {
+                        const seatInfo = liveSeats[event.id] || {
+                          seatsAvailable: Math.max(0, (event.capacity || 100) - (event.seatsBooked || 0)),
+                          percentBooked: Math.min(100, Math.round(((event.seatsBooked || 0) / (event.capacity || 100)) * 100)),
+                          isSoldOut: (event.capacity || 100) <= (event.seatsBooked || 0),
+                        };
+
+                        return (
+                          <div className="mb-4">
+                            <div className="flex justify-between items-center text-xs mb-1.5">
+                              {seatInfo.isSoldOut ? (
+                                <span className="bg-red-500/15 text-red-500 border border-red-500/30 px-2 py-0.5 rounded-md font-bold text-[10px]">
+                                  SOLD OUT
+                                </span>
+                              ) : seatInfo.seatsAvailable <= 10 ? (
+                                <span className="text-amber-500 font-bold text-[11px] flex items-center gap-1 animate-pulse">
+                                  🔥 Only {seatInfo.seatsAvailable} seats left!
+                                </span>
+                              ) : (
+                                <span className="text-secondary text-[11px] font-medium">
+                                  {seatInfo.seatsAvailable} seats available
+                                </span>
+                              )}
+                              <span className="text-[10px] font-mono text-secondary">
+                                {seatInfo.percentBooked}% booked
+                              </span>
+                            </div>
+                            <div className="w-full bg-foreground/10 h-1.5 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full transition-all duration-700 ${
+                                  seatInfo.isSoldOut
+                                    ? "bg-red-500"
+                                    : seatInfo.percentBooked > 85
+                                    ? "bg-amber-500"
+                                    : "bg-primary"
+                                }`}
+                                style={{ width: `${seatInfo.percentBooked}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       <div className="border-t border-card-border/50 pt-4 mt-auto flex justify-between items-end">
                         <div>
                           <p className="text-[10px] font-bold text-secondary uppercase tracking-wider mb-1">
