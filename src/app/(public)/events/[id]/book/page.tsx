@@ -85,6 +85,12 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       const data = await res.json();
 
       if (!res.ok) {
+        if (res.status === 401) {
+          toast.error("Please sign in to book your tickets");
+          router.push(`/auth/user/login?redirect_url=/events/${id}/book`);
+          setLoading(false);
+          return;
+        }
         toast.error(data.error || "Booking request could not be processed");
         setLoading(false);
         return;

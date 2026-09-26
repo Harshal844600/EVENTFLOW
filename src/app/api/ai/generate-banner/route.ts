@@ -107,8 +107,8 @@ export async function POST(req: Request) {
       model: usedModel,
       seed,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error("POST /api/ai/generate-banner error", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to generate banner" }, { status: 500 });
   }
 }

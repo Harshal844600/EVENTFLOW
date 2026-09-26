@@ -162,6 +162,10 @@ export async function POST(req: Request) {
     }
 
     logger.error("POST /api/bookings unexpected error", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const message =
+      error?.error?.description ||
+      error?.message ||
+      "An error occurred while creating your booking order.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

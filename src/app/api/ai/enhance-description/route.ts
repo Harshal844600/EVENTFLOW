@@ -117,8 +117,8 @@ ${tone ? `- Tone: ${tone}` : ""}
       enhancedDescription: generatedCopy,
       model: usedModel,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error("POST /api/ai/enhance-description error", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to enhance description" }, { status: 500 });
   }
 }
