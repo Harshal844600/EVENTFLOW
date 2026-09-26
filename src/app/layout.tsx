@@ -32,6 +32,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "EventFlow",
   description: "Modern Event Booking Platform",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
