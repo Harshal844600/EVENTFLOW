@@ -21,7 +21,7 @@ const ICON_CONCEPTS: IconConcept[] = [
   {
     id: "1",
     name: "The Quantum Ticket",
-    badge: "Current Active Icon",
+    badge: "Alternative Concept A",
     subtitle: "Cybernetic Stadium Ticket & Neural Spark",
     description:
       "A precision chamfered smart ticket silhouette fused with dual orbital quantum flux rings and an intense radiant 4-point AI spark star core.",
@@ -31,7 +31,7 @@ const ICON_CONCEPTS: IconConcept[] = [
   {
     id: "2",
     name: "The Neural Flux",
-    badge: "Alternative Concept A",
+    badge: "Alternative Concept B",
     subtitle: "Intertwined Infinity Waves & AI Synapse",
     description:
       "An interlocking Mobius infinity ribbon forming dynamic 'E' and 'F' flow curves with electric teal-to-gold gradients and pulsing neural synapse nodes.",
@@ -41,7 +41,7 @@ const ICON_CONCEPTS: IconConcept[] = [
   {
     id: "3",
     name: "The AI Hyper-Spark Prism",
-    badge: "Alternative Concept B",
+    badge: "Current Active Icon",
     subtitle: "Faceted 8-Point Crystal & Hexagonal Crest",
     description:
       "An architectural 8-point geometric crystal spark with multi-faceted metallic bevels set upon an obsidian hexagonal substrate. Elite luxury tech aura.",
@@ -61,7 +61,7 @@ const ICON_CONCEPTS: IconConcept[] = [
 ];
 
 export default function IconShowcasePage() {
-  const [activeId, setActiveId] = useState<string>("1");
+  const [activeId, setActiveId] = useState<string>("3");
   const [applying, setApplying] = useState<string | null>(null);
 
   const handleSelectIcon = async (id: string, name: string) => {

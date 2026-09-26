@@ -12,8 +12,9 @@ interface EventFlowLogoProps {
 }
 
 /**
- * EventFlow AI-Generated Vector Brandmark & Emblem
- * Represents an isometric AI smart event ticket infused with quantum neural orbital flux.
+ * EventFlow AI Hyper-Spark Prism Vector Brandmark
+ * Option 3: Architectural 8-point geometric crystal spark with multi-faceted metallic bevels
+ * mounted on an obsidian hexagonal shield substrate.
  */
 export function EventFlowLogo({
   size = 36,
@@ -34,170 +35,91 @@ export function EventFlowLogo({
           viewBox="0 0 100 100"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-[0_2px_12px_rgba(255,225,124,0.35)]"
-          aria-label="EventFlow AI Emblem"
+          className="w-full h-full drop-shadow-[0_2px_14px_rgba(255,225,124,0.4)]"
+          aria-label="EventFlow AI Hyper-Spark Prism"
         >
           <defs>
-            {/* Radiant Brand Gold Gradient */}
-            <linearGradient id="efGradGold" x1="10%" y1="10%" x2="90%" y2="90%">
-              <stop offset="0%" stopColor="#FFF9D2" />
-              <stop offset="35%" stopColor="#FFE17C" />
-              <stop offset="75%" stopColor="#F59E0B" />
-              <stop offset="100%" stopColor="#D97706" />
+            <linearGradient id="opt3GoldLight" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FFFFFF" />
+              <stop offset="50%" stopColor="#FFE17C" />
+              <stop offset="100%" stopColor="#F59E0B" />
             </linearGradient>
 
-            {/* AI Neural Flow Gradient */}
-            <linearGradient id="efGradCyan" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#10B981" />
-              <stop offset="50%" stopColor="#06B6D4" />
-              <stop offset="100%" stopColor="#6366F1" />
+            <linearGradient id="opt3GoldDark" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FFE17C" />
+              <stop offset="60%" stopColor="#D97706" />
+              <stop offset="100%" stopColor="#92400E" />
             </linearGradient>
 
-            {/* Obsidian Metallic Ticket Surface */}
-            <linearGradient id="efGradShield" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#253229" />
+            <linearGradient id="opt3CyanFacet" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#06B6D4" />
+              <stop offset="100%" stopColor="#10B981" />
+            </linearGradient>
+
+            <linearGradient id="opt3HexBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2A382F" />
               <stop offset="60%" stopColor="#171E19" />
-              <stop offset="100%" stopColor="#0C110E" />
+              <stop offset="100%" stopColor="#0A0E0C" />
             </linearGradient>
 
-            {/* Deep Core Glow */}
-            <radialGradient id="efGradCoreGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-              <stop offset="30%" stopColor="#FFE17C" stopOpacity="0.7" />
-              <stop offset="70%" stopColor="#06B6D4" stopOpacity="0.25" />
+            <radialGradient id="opt3CoreFlare" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+              <stop offset="35%" stopColor="#FFE17C" stopOpacity="0.65" />
+              <stop offset="80%" stopColor="#06B6D4" stopOpacity="0.15" />
               <stop offset="100%" stopColor="#171E19" stopOpacity="0" />
             </radialGradient>
           </defs>
 
-          {/* Ambient Outer Halo */}
-          <circle cx="50" cy="50" r="46" fill="url(#efGradCoreGlow)" opacity="0.4" />
-
-          {/* Chamfered AI Smart-Ticket Contour */}
-          <path
-            d="M 22 18
-               C 22 11 27 6 34 6
-               L 66 6
-               C 73 6 78 11 78 18
-               L 78 39
-               C 72 39 68 44 68 50
-               C 68 56 72 61 78 61
-               L 78 82
-               C 78 89 73 94 66 94
-               L 34 94
-               C 27 94 22 89 22 82
-               L 22 61
-               C 28 61 32 56 32 50
-               C 32 44 28 39 22 39
-               Z"
-            fill="url(#efGradShield)"
-            stroke="url(#efGradGold)"
-            strokeWidth="2.5"
+          {/* Hexagonal Shield Crest */}
+          <polygon
+            points="50,6 88,27 88,73 50,94 12,73 12,27"
+            fill="url(#opt3HexBg)"
+            stroke="url(#opt3GoldLight)"
+            strokeWidth="2.2"
             strokeLinejoin="round"
           />
 
-          {/* Perforated Inner High-Speed Flow Track */}
-          <path
-            d="M 27 21
-               C 27 16 31 12 36 12
-               L 64 12
-               C 69 12 73 16 73 21
-               L 73 37
-               C 67 39 63 44 63 50
-               C 63 56 67 61 73 63
-               L 73 79
-               C 73 84 69 88 64 88
-               L 36 88
-               C 31 88 27 84 27 79
-               L 27 63
-               C 33 61 37 56 37 50
-               C 37 44 33 39 27 37
-               Z"
-            fill="none"
-            stroke="url(#efGradCyan)"
-            strokeWidth="1.2"
-            strokeDasharray="3 2.5"
-            opacity="0.75"
-          />
-
-          {/* Dynamic AI Neural Orbital Rings */}
-          <g transform="rotate(-30 50 50)">
-            <ellipse
+          {/* Core Radial Flare */}
+          {animated ? (
+            <motion.circle
               cx="50"
               cy="50"
-              rx="31"
-              ry="11"
-              fill="none"
-              stroke="url(#efGradGold)"
-              strokeWidth="1.4"
-              strokeDasharray="6 3 2 3"
-              opacity="0.8"
+              r="32"
+              fill="url(#opt3CoreFlare)"
+              animate={{ opacity: [0.6, 1, 0.6], scale: [0.95, 1.05, 0.95] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             />
-            {animated ? (
-              <motion.circle
-                cx="81"
-                cy="50"
-                r="2.2"
-                fill="#FFE17C"
-                animate={{ scale: [1, 1.4, 1], opacity: [0.8, 1, 0.8] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-            ) : (
-              <circle cx="81" cy="50" r="2.2" fill="#FFE17C" />
-            )}
-          </g>
+          ) : (
+            <circle cx="50" cy="50" r="32" fill="url(#opt3CoreFlare)" />
+          )}
 
-          <g transform="rotate(30 50 50)">
-            <ellipse
-              cx="50"
-              cy="50"
-              rx="31"
-              ry="11"
-              fill="none"
-              stroke="url(#efGradCyan)"
-              strokeWidth="1.4"
-              strokeDasharray="4 4"
-              opacity="0.75"
-            />
-            {animated ? (
-              <motion.circle
-                cx="50"
-                cy="39"
-                r="2.2"
-                fill="#10B981"
-                animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              />
-            ) : (
-              <circle cx="50" cy="39" r="2.2" fill="#10B981" />
-            )}
-          </g>
+          {/* 8-Point Faceted Refractive Prism Spark */}
+          {/* Top Vertex Facets */}
+          <polygon points="50,18 50,50 42,42" fill="url(#opt3GoldLight)" />
+          <polygon points="50,18 58,42 50,50" fill="url(#opt3GoldDark)" />
 
-          {/* Central AI Quantum Spark (Primary 4-point Star) */}
-          <path
-            d="M 50 31
-               C 50 41 41 50 31 50
-               C 41 50 50 59 50 69
-               C 50 59 59 50 69 50
-               C 59 50 50 41 50 31
-               Z"
-            fill="url(#efGradGold)"
-          />
+          {/* Right Vertex Facets */}
+          <polygon points="82,50 50,50 58,42" fill="url(#opt3GoldLight)" />
+          <polygon points="82,50 58,58 50,50" fill="url(#opt3CyanFacet)" />
 
-          {/* High-Luminance Micro Star Flare */}
-          <path
-            d="M 50 41
-               C 50 46 46 50 41 50
-               C 46 50 50 54 50 59
-               C 50 54 54 50 59 50
-               C 54 50 50 46 50 41
-               Z"
-            fill="#FFFFFF"
-            opacity="0.95"
-          />
+          {/* Bottom Vertex Facets */}
+          <polygon points="50,82 50,50 58,58" fill="url(#opt3GoldDark)" />
+          <polygon points="50,82 42,58 50,50" fill="url(#opt3CyanFacet)" />
 
-          {/* Quantum Node Core */}
-          <circle cx="50" cy="50" r="2.5" fill="#171E19" />
-          <circle cx="50" cy="50" r="1.3" fill="#FFE17C" />
+          {/* Left Vertex Facets */}
+          <polygon points="18,50 50,50 42,58" fill="url(#opt3GoldDark)" />
+          <polygon points="18,50 42,42 50,50" fill="url(#opt3GoldLight)" />
+
+          {/* Diagonal Sub-Sparks with Refractive Highlights */}
+          <polygon points="28,28 50,50 42,42" fill="url(#opt3CyanFacet)" opacity="0.9" />
+          <polygon points="72,28 50,50 58,42" fill="#FFE17C" opacity="0.9" />
+          <polygon points="72,72 50,50 58,58" fill="url(#opt3CyanFacet)" opacity="0.9" />
+          <polygon points="28,72 50,50 42,58" fill="#FFE17C" opacity="0.9" />
+
+          {/* Center Diamond Quantum Core */}
+          <polygon points="50,44 56,50 50,56 44,50" fill="#FFFFFF" />
+          <circle cx="50" cy="50" r="1.6" fill="#171E19" />
+          <circle cx="50" cy="50" r="0.8" fill="#FFE17C" />
         </svg>
       </div>
 
