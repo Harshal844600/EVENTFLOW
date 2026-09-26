@@ -53,7 +53,9 @@ export default function RazorpayStandardCheckoutPage() {
       // STEP 2: FRONTEND - Open Razorpay Standard Checkout Modal
       // =========================================================================
       const keyId =
-        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TgYGsBQUXcyijC";
+        orderJson.key_id ||
+        process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ||
+        "rzp_test_TgYGsBQUXcyijC";
 
       const options = {
         key: keyId,

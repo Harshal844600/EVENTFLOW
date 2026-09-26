@@ -34,7 +34,7 @@ export function LiveBookingToast() {
     };
 
     fetchFeed();
-    const interval = setInterval(fetchFeed, 30_000); // sync every 30s
+    const interval = setInterval(fetchFeed, 60_000); // lightweight sync every 60s
     return () => clearInterval(interval);
   }, []);
 

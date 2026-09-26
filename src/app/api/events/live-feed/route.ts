@@ -3,10 +3,29 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+// High-performance server-side in-memory cache
+interface CacheEntry {
+  data: any;
+  expiresAt: number;
+}
+const cacheStore: Map<string, CacheEntry> = new Map();
+const CACHE_TTL_MS = 15_000; // 15 seconds cache
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const eventId = searchParams.get("eventId");
+    const cacheKey = eventId || "global";
+
+    const cached = cacheStore.get(cacheKey);
+    if (cached && Date.now() < cached.expiresAt) {
+      return NextResponse.json(cached.data, {
+        headers: {
+          "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
+          "X-Cache": "HIT",
+        },
+      });
+    }
 
     // 1. Fetch current live seat counts for events
     const events = await prisma.event.findMany({
@@ -75,19 +94,24 @@ export async function GET(req: Request) {
       };
     });
 
-    return NextResponse.json(
-      {
-        success: true,
-        timestamp: new Date().toISOString(),
-        seats: seatMap,
-        recentActivity,
+    const payload = {
+      success: true,
+      timestamp: new Date().toISOString(),
+      seats: seatMap,
+      recentActivity,
+    };
+
+    cacheStore.set(cacheKey, {
+      data: payload,
+      expiresAt: Date.now() + CACHE_TTL_MS,
+    });
+
+    return NextResponse.json(payload, {
+      headers: {
+        "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
+        "X-Cache": "MISS",
       },
-      {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate",
-        },
-      }
-    );
+    });
   } catch (error) {
     console.error("GET /api/events/live-feed error:", error);
     return NextResponse.json({ error: "Failed to fetch live feed" }, { status: 500 });

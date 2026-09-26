@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { razorpay } from "@/lib/razorpay";
+import { getRazorpayCredentials, getRazorpayClient } from "@/lib/razorpay";
 import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    const { key_id, key_secret } = getRazorpayCredentials();
 
-    if (!keySecret || !keyId) {
+    if (!key_secret || !key_id) {
       logger.error("Razorpay API keys are not configured in environment");
       return NextResponse.json(
         { error: "Payment gateway credentials not configured on server" },
@@ -39,7 +38,8 @@ export async function POST(req: Request) {
     const orderReceipt = receipt || `rcpt_${Date.now()}`;
 
     // Call Razorpay API to create standard order
-    const order = await razorpay.orders.create({
+    const client = getRazorpayClient();
+    const order = await client.orders.create({
       amount: Math.round(numericAmount),
       currency: currency || "INR",
       receipt: String(orderReceipt).substring(0, 40),
@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       {
         order_id: order.id,
         id: order.id,
+        key_id: key_id,
         amount: order.amount,
         currency: order.currency,
         receipt: order.receipt,

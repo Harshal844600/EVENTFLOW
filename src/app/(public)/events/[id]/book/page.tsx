@@ -64,7 +64,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       }
     };
 
-    const interval = setInterval(checkLiveSeats, 10_000);
+    const interval = setInterval(checkLiveSeats, 30_000);
     return () => clearInterval(interval);
   }, [id]);
 
@@ -104,7 +104,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
 
       // Initialize Razorpay with real user credentials
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TgYGsBQUXcyijC",
+        key: data.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TgYGsBQUXcyijC",
         amount: data.amount,
         currency: data.currency,
         name: "EventFlow",

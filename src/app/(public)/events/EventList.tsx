@@ -47,7 +47,7 @@ export function EventList({ events }: { events: any[] }) {
     };
 
     syncLiveSeats();
-    const interval = setInterval(syncLiveSeats, 15_000); // 15s live sync
+    const interval = setInterval(syncLiveSeats, 45_000); // 45s live sync
     return () => clearInterval(interval);
   }, []);
 

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { getOrCreateDbUser } from "@/lib/user";
-import { razorpay } from "@/lib/razorpay";
+import { getRazorpayCredentials, getRazorpayClient } from "@/lib/razorpay";
 import { rateLimit, getClientIp } from "@/lib/ratelimit";
 import { logger } from "@/lib/logger";
 
@@ -113,13 +113,15 @@ export async function POST(req: Request) {
     }
 
     // 4. Razorpay Order Creation for Paid Ticket
+    const { key_id } = getRazorpayCredentials();
+    const client = getRazorpayClient();
     const orderOptions = {
       amount: Math.round(result.totalAmount * 100), // paise
       currency: "INR",
-      receipt: result.booking.id,
+      receipt: String(result.booking.id).substring(0, 40),
     };
 
-    const razorpayOrder = await razorpay.orders.create(orderOptions);
+    const razorpayOrder = await client.orders.create(orderOptions);
 
     // Save payment record
     await prisma.payment.create({
@@ -141,6 +143,7 @@ export async function POST(req: Request) {
       {
         booking: result.booking,
         razorpayOrderId: razorpayOrder.id,
+        key_id: key_id,
         amount: orderOptions.amount,
         currency: orderOptions.currency,
         type: "PAID",

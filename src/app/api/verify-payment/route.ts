@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { getRazorpayCredentials } from "@/lib/razorpay";
 import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
@@ -31,8 +32,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    if (!keySecret) {
+    const { key_secret } = getRazorpayCredentials();
+    if (!key_secret) {
       logger.error("RAZORPAY_KEY_SECRET is not configured on server");
       return NextResponse.json(
         { success: false, error: "Server payment configuration error" },
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
     // 2. Generate expected signature: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
     const dataToSign = `${orderId}|${paymentId}`;
     const generatedSignature = crypto
-      .createHmac("sha256", keySecret)
+      .createHmac("sha256", key_secret)
       .update(dataToSign)
       .digest("hex");
 
