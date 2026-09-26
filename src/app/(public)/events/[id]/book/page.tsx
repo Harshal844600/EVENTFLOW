@@ -98,15 +98,40 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
 
       // Initialize Razorpay with real user credentials
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TDro9gl7EIyj1h",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TgYGsBQUXcyijC",
         amount: data.amount,
         currency: data.currency,
         name: "EventFlow",
         description: `${quantity} Ticket(s) for ${eventData?.title}`,
         order_id: data.razorpayOrderId,
         handler: async function (response: any) {
-          toast.success("Payment successful! Your tickets are confirmed.");
-          router.push("/dashboard/bookings");
+          try {
+            // STEP 3: Verify cryptographic HMAC-SHA256 signature with backend
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                order_id: response.razorpay_order_id,
+                payment_id: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+                bookingId: data.booking?.id,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (verifyRes.ok && verifyData.success) {
+              toast.success("Payment verified successfully! Your tickets are confirmed.");
+              router.push("/dashboard/bookings");
+            } else {
+              toast.error(verifyData.error || "Payment verification failed. Please contact support.");
+              setLoading(false);
+            }
+          } catch (verifyErr) {
+            console.error("Verification error:", verifyErr);
+            toast.error("Network error while verifying payment signature.");
+            setLoading(false);
+          }
         },
         prefill: {
           name: user?.fullName || user?.firstName || "Event Attendee",
