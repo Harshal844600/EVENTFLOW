@@ -7,7 +7,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { ThemeToggle } from "./ThemeToggle";
 import { Magnetic } from "./Magnetic";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
-import { Menu, X, Calendar, Info, CreditCard, Shield, ArrowRight } from "lucide-react";
+import { Menu, X, Calendar, Info, Shield, ArrowRight } from "lucide-react";
 import React from "react";
 
 interface NavbarClientProps {
@@ -97,24 +97,6 @@ export function NavbarClient({ isAdmin, hasUser, userMenuNode }: NavbarClientPro
             >
               About
               {pathname === "/about" && (
-                <motion.span
-                  layoutId="active-nav-line"
-                  className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"
-                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                />
-              )}
-            </Link>
-          </Magnetic>
-
-          <Magnetic strength={15}>
-            <Link 
-              href="/checkout" 
-              className={`hover:text-primary transition-colors block py-2 px-3 relative ${
-                pathname === "/checkout" ? "text-primary" : "text-foreground/80"
-              }`}
-            >
-              Checkout
-              {pathname === "/checkout" && (
                 <motion.span
                   layoutId="active-nav-line"
                   className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"
@@ -250,22 +232,6 @@ export function NavbarClient({ isAdmin, hasUser, userMenuNode }: NavbarClientPro
                   <span className="flex items-center gap-3">
                     <Info className="w-5 h-5 text-secondary" />
                     <span>About EventFlow</span>
-                  </span>
-                  <ArrowRight className="w-4 h-4 opacity-50" />
-                </Link>
-
-                <Link
-                  href="/checkout"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between p-3.5 rounded-xl font-anton text-lg uppercase tracking-wider transition-colors ${
-                    pathname === "/checkout"
-                      ? "bg-primary/15 text-primary border border-primary/25"
-                      : "hover:bg-foreground/5 text-foreground"
-                  }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <CreditCard className="w-5 h-5 text-emerald-400" />
-                    <span>Razorpay Checkout</span>
                   </span>
                   <ArrowRight className="w-4 h-4 opacity-50" />
                 </Link>
