@@ -6,7 +6,19 @@ import Script from "next/script";
 import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import Link from "next/link";
-import { ArrowLeft, Clock, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  ShieldCheck,
+  Sparkles,
+  AlertCircle,
+  ShieldAlert,
+  AlertTriangle,
+  RefreshCw,
+  ExternalLink,
+  FileText,
+  X,
+} from "lucide-react";
 
 export default function BookEventPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -18,6 +30,13 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
   const [liveSeatsRemaining, setLiveSeatsRemaining] = useState<number | null>(null);
   const [reservationTime, setReservationTime] = useState(600); // 10 minute countdown timer
 
+  const [verificationError, setVerificationError] = useState<{
+    title: string;
+    message: string;
+    details?: string;
+    code?: string;
+    statusCode?: number;
+  } | null>(null);
   const [gatewayNotice, setGatewayNotice] = useState<{ title: string; message: string } | null>(null);
   const [waitlistStatus, setWaitlistStatus] = useState<{
     isEnrolled: boolean;
@@ -127,6 +146,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
     }
 
     setGatewayNotice(null);
+    setVerificationError(null);
     setLoading(true);
     try {
       const res = await fetch("/api/bookings", {
@@ -145,16 +165,24 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
           return;
         }
 
-        if (data.isGatewayError || res.status === 502) {
-          setGatewayNotice({
-            title: "Online Payment Verification Notice",
-            message:
-              data.details ||
-              "The payment gateway for this organizer is currently undergoing merchant verification or maintenance. Please contact our support team to confirm your seat.",
+        // Check if error is verification or gateway related
+        if (data.isVerificationError || data.isGatewayError || res.status === 400 || res.status === 502) {
+          setVerificationError({
+            title: data.error || "Payment Gateway Verification Error",
+            message: data.message || "The Razorpay Test API is currently not active or rejected credentials.",
+            details: data.details || data.gatewayError || "Merchant credentials or account verification required.",
+            code: data.gatewayCode,
+            statusCode: data.statusCode || res.status,
           });
+          toast.error(
+            data.gatewayError
+              ? `Verification Error: ${data.gatewayError}`
+              : "Payment Gateway Verification Error"
+          );
+        } else {
+          toast.error(data.error || "Booking request could not be processed");
         }
 
-        toast.error(data.error || "Booking request could not be processed");
         setLoading(false);
         return;
       }
@@ -165,39 +193,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
         return;
       }
 
-      // Handle Sandbox Simulator Test Checkout
-      if (data.isMockOrder) {
-        toast.info("Using Razorpay Test Sandbox simulator...");
-        try {
-          const verifyRes = await fetch("/api/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              order_id: data.razorpayOrderId,
-              payment_id: `pay_test_${Date.now()}`,
-              signature: "sig_test_verified",
-              bookingId: data.booking?.id,
-            }),
-          });
-
-          const verifyData = await verifyRes.json();
-          if (verifyRes.ok && verifyData.success) {
-            toast.success("Test Payment verified! Your pass is confirmed.");
-            router.push("/dashboard/bookings");
-            return;
-          } else {
-            toast.error(verifyData.error || "Payment verification failed.");
-            setLoading(false);
-            return;
-          }
-        } catch (simErr) {
-          toast.error("Network error during test payment verification.");
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Initialize Razorpay with real user credentials
+      // Initialize Razorpay SDK with real user credentials
       const options = {
         key: data.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TgYGsBQUXcyijC",
         amount: data.amount,
@@ -207,7 +203,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
         order_id: data.razorpayOrderId,
         handler: async function (response: any) {
           try {
-            // STEP 3: Verify cryptographic HMAC-SHA256 signature with backend
+            // Verify cryptographic HMAC-SHA256 signature with backend
             const verifyRes = await fetch("/api/verify-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -225,6 +221,12 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
               toast.success("Payment verified successfully! Your tickets are confirmed.");
               router.push("/dashboard/bookings");
             } else {
+              setVerificationError({
+                title: "Signature Verification Error",
+                message: "Server failed to verify payment signature.",
+                details: verifyData.error || "Cryptographic HMAC signature mismatch.",
+                code: "SIGNATURE_MISMATCH",
+              });
               toast.error(verifyData.error || "Payment verification failed. Please contact support.");
               setLoading(false);
             }
@@ -253,18 +255,14 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
 
       rzp.on("payment.failed", function (response: any) {
         const errorDesc = response?.error?.description || "Payment failed or cancelled";
+        const errorCode = response?.error?.code || "PAYMENT_FAILED";
         toast.error(`Payment failed: ${errorDesc}`);
-        if (
-          errorDesc.toLowerCase().includes("merchant") ||
-          errorDesc.toLowerCase().includes("category") ||
-          errorDesc.toLowerCase().includes("inactive")
-        ) {
-          setGatewayNotice({
-            title: "Gateway Verification in Progress",
-            message:
-              "Our payment processing partner is verifying this organizer's merchant status. Please reach out to our support team for immediate reservation assistance.",
-          });
-        }
+        setVerificationError({
+          title: "Payment Gateway Verification Error",
+          message: "Razorpay rejected the checkout transaction.",
+          details: errorDesc,
+          code: errorCode,
+        });
         setLoading(false);
       });
 
@@ -493,8 +491,92 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
               </span>
             </div>
 
+            {/* Dedicated Verification Error Banner/Card */}
+            {verificationError && (
+              <div className="relative overflow-hidden rounded-2xl border-2 border-red-500/40 bg-gradient-to-br from-red-500/10 via-card-bg to-red-950/20 p-5 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-300 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/40 flex items-center justify-center shrink-0">
+                      <ShieldAlert className="w-5 h-5 text-red-500 animate-pulse" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-anton text-sm uppercase tracking-wider text-red-400">
+                          {verificationError.title}
+                        </span>
+                        {verificationError.statusCode && (
+                          <span className="text-[10px] font-mono font-bold bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/30">
+                            HTTP {verificationError.statusCode}
+                          </span>
+                        )}
+                        {verificationError.code && (
+                          <span className="text-[10px] font-mono text-secondary bg-card-bg px-2 py-0.5 rounded-md border border-card-border">
+                            {verificationError.code}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs font-semibold text-foreground mt-0.5">
+                        {verificationError.message}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setVerificationError(null)}
+                    className="text-secondary hover:text-foreground p-1 rounded-lg hover:bg-white/5 transition-colors"
+                    aria-label="Close error notice"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Gateway Detail Box */}
+                <div className="bg-background/60 border border-red-500/20 rounded-xl p-3 text-xs space-y-1.5 font-mono">
+                  <div className="flex items-start gap-2 text-red-300">
+                    <span className="font-bold shrink-0">Gateway Response:</span>
+                    <span className="break-all">
+                      {verificationError.details || "Authentication failed with Razorpay API credentials."}
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-sans text-secondary pt-1 border-t border-card-border/60">
+                    Razorpay test mode requires an active merchant account in good standing. If onboarding KYC or category review is pending, orders are blocked.
+                  </p>
+                </div>
+
+                {/* Quick Action Links */}
+                <div className="flex items-center justify-between gap-2 flex-wrap pt-2 border-t border-red-500/20 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-charcoal font-bold text-xs hover:opacity-90 transition-opacity"
+                    >
+                      <span>Contact Support</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                    <Link
+                      href="/refund"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card-bg border border-card-border text-foreground hover:bg-card-border/40 transition-colors font-medium text-xs"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-secondary" />
+                      <span>Refund Policy</span>
+                    </Link>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleBooking}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-foreground transition-colors ml-auto cursor-pointer"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                    <span>Retry Verification</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Gateway Notice if verification/error occurs */}
-            {gatewayNotice && (
+            {gatewayNotice && !verificationError && (
               <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-foreground space-y-2">
                 <div className="flex items-center gap-2 text-amber-500 font-bold text-xs uppercase tracking-wider">
                   <AlertCircle className="w-4 h-4 shrink-0" />

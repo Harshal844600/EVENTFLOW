@@ -114,7 +114,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ booking: result.booking, type: "FREE" }, { status: 201 });
     }
 
-    // 4. Razorpay Order Creation for Paid Ticket
+    // 4. Razorpay Order Creation for Paid Ticket (Attempt Test API)
     const { key_id } = getRazorpayCredentials();
     const client = getRazorpayClient();
     const orderOptions = {
@@ -124,18 +124,46 @@ export async function POST(req: Request) {
     };
 
     let razorpayOrderId: string;
-    let isMockOrder = false;
 
     try {
+      // Strictly invoke Razorpay API with test credentials
       const razorpayOrder = await client.orders.create(orderOptions);
       razorpayOrderId = razorpayOrder.id;
     } catch (orderErr: any) {
-      logger.warn("Razorpay API key error. Using Sandbox Test Mode fallback for local testing.", orderErr);
-      razorpayOrderId = `order_test_${Date.now()}`;
-      isMockOrder = true;
+      // The Razorpay test API is not working (e.g. 401 Authentication failed / Account unverified)
+      // Delete the pending booking to maintain clean state
+      await prisma.booking.delete({ where: { id: result.booking.id } }).catch(() => {});
+
+      const statusCode = orderErr?.statusCode || 400;
+      const errorDesc =
+        orderErr?.error?.description ||
+        orderErr?.message ||
+        "Authentication failed with Razorpay API credentials.";
+      const errorCode = orderErr?.error?.code || "BAD_REQUEST_ERROR";
+
+      logger.error("Razorpay test API rejected order creation", {
+        statusCode,
+        errorCode,
+        errorDesc,
+        bookingId: result.booking.id,
+        eventId,
+      });
+
+      return NextResponse.json(
+        {
+          error: "Payment Gateway Verification Error",
+          isVerificationError: true,
+          gatewayError: errorDesc,
+          gatewayCode: errorCode,
+          statusCode,
+          message: "The Razorpay Test API is currently not active or rejected the authentication credentials.",
+          details: `Razorpay reported: "${errorDesc}" (Status ${statusCode}). Payment gateway merchant verification or active credentials are required before payments can be processed.`,
+        },
+        { status: 400 }
+      );
     }
 
-    // Save payment record
+    // Save payment record once Razorpay order is successfully generated
     await prisma.payment.create({
       data: {
         bookingId: result.booking.id,
@@ -145,11 +173,10 @@ export async function POST(req: Request) {
       },
     });
 
-    logger.info("Paid order created successfully", {
+    logger.info("Paid order created successfully via Razorpay test API", {
       bookingId: result.booking.id,
       orderId: razorpayOrderId,
       amount: result.totalAmount,
-      isMockOrder,
     });
 
     return NextResponse.json(
@@ -160,7 +187,7 @@ export async function POST(req: Request) {
         amount: orderOptions.amount,
         currency: orderOptions.currency,
         type: "PAID",
-        isMockOrder,
+        isMockOrder: false,
       },
       { status: 201 }
     );
