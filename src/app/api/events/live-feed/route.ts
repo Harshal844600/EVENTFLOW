@@ -9,25 +9,40 @@ interface CacheEntry {
   expiresAt: number;
 }
 const cacheStore: Map<string, CacheEntry> = new Map();
-const CACHE_TTL_MS = 15_000; // 15 seconds cache
+const CACHE_TTL_MS = 6_000; // 6 seconds lightweight micro-cache
+
+/**
+ * Invalidate the live feed cache when bookings, cancellations, or updates occur
+ */
+export function invalidateLiveFeedCache(eventId?: string) {
+  if (eventId) {
+    cacheStore.delete(eventId);
+  }
+  cacheStore.delete("global");
+  cacheStore.clear();
+}
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const eventId = searchParams.get("eventId");
+    const isFreshRequested = searchParams.get("fresh") === "true";
     const cacheKey = eventId || "global";
 
-    const cached = cacheStore.get(cacheKey);
-    if (cached && Date.now() < cached.expiresAt) {
-      return NextResponse.json(cached.data, {
-        headers: {
-          "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
-          "X-Cache": "HIT",
-        },
-      });
+    // Bypass cache if fresh sync requested
+    if (!isFreshRequested) {
+      const cached = cacheStore.get(cacheKey);
+      if (cached && Date.now() < cached.expiresAt) {
+        return NextResponse.json(cached.data, {
+          headers: {
+            "Cache-Control": "public, s-maxage=5, stale-while-revalidate=10",
+            "X-Cache": "HIT",
+          },
+        });
+      }
     }
 
-    // 1. Fetch current live seat counts for events
+    // 1. Fetch current live seat counts for published events
     const events = await prisma.event.findMany({
       where: { status: "PUBLISHED" },
       select: {
@@ -108,7 +123,8 @@ export async function GET(req: Request) {
 
     return NextResponse.json(payload, {
       headers: {
-        "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+        "Pragma": "no-cache",
         "X-Cache": "MISS",
       },
     });

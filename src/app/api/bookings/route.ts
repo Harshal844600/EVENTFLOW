@@ -5,6 +5,7 @@ import { getOrCreateDbUser } from "@/lib/user";
 import { getRazorpayCredentials, getRazorpayClient } from "@/lib/razorpay";
 import { rateLimit, getClientIp } from "@/lib/ratelimit";
 import { logger } from "@/lib/logger";
+import { invalidateLiveFeedCache } from "@/app/api/events/live-feed/route";
 
 export async function POST(req: Request) {
   try {
@@ -104,6 +105,7 @@ export async function POST(req: Request) {
     });
 
     if (result.type === "FREE") {
+      invalidateLiveFeedCache(eventId);
       logger.info("Free ticket booked successfully", {
         bookingId: result.booking.id,
         eventId,

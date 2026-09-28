@@ -45,10 +45,16 @@ export function EventList({ events }: { events: any[] }) {
   const [liveSeats, setLiveSeats] = useState<Record<string, { seatsAvailable: number; percentBooked: number; isSoldOut: boolean }>>({});
 
   useEffect(() => {
-    const syncLiveSeats = async () => {
+    let isSubscribed = true;
+
+    const syncLiveSeats = async (forceFresh = false) => {
+      if (typeof document !== "undefined" && document.hidden && !forceFresh) return;
+
       try {
-        const res = await fetch("/api/events/live-feed");
-        if (res.ok) {
+        const res = await fetch(`/api/events/live-feed${forceFresh ? "?fresh=true" : ""}`, {
+          cache: forceFresh ? "no-store" : "default",
+        });
+        if (res.ok && isSubscribed) {
           const data = await res.json();
           if (data.seats) {
             setLiveSeats(data.seats);
@@ -59,9 +65,28 @@ export function EventList({ events }: { events: any[] }) {
       }
     };
 
-    syncLiveSeats();
-    const interval = setInterval(syncLiveSeats, 45_000);
-    return () => clearInterval(interval);
+    // Immediate fresh sync
+    syncLiveSeats(true);
+
+    // Fast 8-second interval when active
+    const interval = setInterval(() => syncLiveSeats(false), 8_000);
+
+    const handleFocus = () => syncLiveSeats(true);
+    const handleVisibility = () => {
+      if (typeof document !== "undefined" && !document.hidden) {
+        syncLiveSeats(true);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      isSubscribed = false;
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   const categories = ["ALL", ...Array.from(new Set(events.map((e) => e.category.toUpperCase()))).filter(cat => cat !== "ALL")];

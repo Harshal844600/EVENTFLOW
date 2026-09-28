@@ -74,12 +74,18 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       .catch(() => {});
   }, [id]);
 
-  // Real-time seat updates
+  // Real-time high-accuracy seat updates
   useEffect(() => {
-    const checkLiveSeats = async () => {
+    let isSubscribed = true;
+
+    const checkLiveSeats = async (forceFresh = false) => {
+      if (typeof document !== "undefined" && document.hidden && !forceFresh) return;
+
       try {
-        const res = await fetch(`/api/events/live-feed?eventId=${id}`);
-        if (res.ok) {
+        const res = await fetch(`/api/events/live-feed?eventId=${id}${forceFresh ? "&fresh=true" : ""}`, {
+          cache: forceFresh ? "no-store" : "default",
+        });
+        if (res.ok && isSubscribed) {
           const feed = await res.json();
           if (feed.seats && feed.seats[id]) {
             setLiveSeatsRemaining(feed.seats[id].seatsAvailable);
@@ -90,8 +96,28 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       }
     };
 
-    const interval = setInterval(checkLiveSeats, 30_000);
-    return () => clearInterval(interval);
+    // Eager fresh sync
+    checkLiveSeats(true);
+
+    // 5-second polling interval during active checkout
+    const interval = setInterval(() => checkLiveSeats(false), 5_000);
+
+    const handleFocus = () => checkLiveSeats(true);
+    const handleVisibility = () => {
+      if (typeof document !== "undefined" && !document.hidden) {
+        checkLiveSeats(true);
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      isSubscribed = false;
+      clearInterval(interval);
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [id]);
 
   const handleBooking = async () => {

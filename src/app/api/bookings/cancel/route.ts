@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getOrCreateDbUser } from "@/lib/user";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { invalidateLiveFeedCache } from "@/app/api/events/live-feed/route";
 
 export async function POST(req: Request) {
   try {
@@ -105,6 +106,9 @@ export async function POST(req: Request) {
 
       return { updatedBooking, promotedWaitlistUser: topWaitlist?.user?.email || null };
     });
+
+    // Invalidate live seat cache immediately for real-time accuracy across all active browser sessions
+    invalidateLiveFeedCache(booking.eventId);
 
     logger.info("Booking cancelled successfully", {
       bookingId,

@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { getRazorpayCredentials } from "@/lib/razorpay";
 import { logger } from "@/lib/logger";
+import { invalidateLiveFeedCache } from "@/app/api/events/live-feed/route";
 
 export async function POST(req: Request) {
   try {
@@ -117,6 +118,9 @@ export async function POST(req: Request) {
             });
           }
         });
+
+        // Eagerly clear live feed cache to reflect updated seat count across all client UIs
+        invalidateLiveFeedCache();
       }
     } catch (dbError) {
       // Non-fatal database update error logged, signature itself is verified
