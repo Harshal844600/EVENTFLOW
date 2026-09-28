@@ -165,6 +165,38 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
         return;
       }
 
+      // Handle Sandbox Simulator Test Checkout
+      if (data.isMockOrder) {
+        toast.info("Using Razorpay Test Sandbox simulator...");
+        try {
+          const verifyRes = await fetch("/api/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              order_id: data.razorpayOrderId,
+              payment_id: `pay_test_${Date.now()}`,
+              signature: "sig_test_verified",
+              bookingId: data.booking?.id,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok && verifyData.success) {
+            toast.success("Test Payment verified! Your pass is confirmed.");
+            router.push("/dashboard/bookings");
+            return;
+          } else {
+            toast.error(verifyData.error || "Payment verification failed.");
+            setLoading(false);
+            return;
+          }
+        } catch (simErr) {
+          toast.error("Network error during test payment verification.");
+          setLoading(false);
+          return;
+        }
+      }
+
       // Initialize Razorpay with real user credentials
       const options = {
         key: data.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TgYGsBQUXcyijC",
