@@ -26,6 +26,8 @@ export default async function ProfilePage() {
     linkedin: dbUser.linkedin,
     github: dbUser.github,
     website: dbUser.website,
+    gender: dbUser.gender,
+    age: dbUser.age,
   };
 
   return (

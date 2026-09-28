@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { getRazorpayCredentials } from "@/lib/razorpay";
 import { logger } from "@/lib/logger";
-import { invalidateLiveFeedCache } from "@/app/api/events/live-feed/route";
+import { invalidateLiveFeedCache } from "@/lib/live-feed-cache";
 
 export async function POST(req: Request) {
   try {

@@ -17,10 +17,27 @@ export async function PUT(req: Request) {
 
     const data = await req.json();
 
+    // Validate and parse age
+    let validAge: number | null = null;
+    if (data.age !== undefined && data.age !== null && data.age !== "") {
+      const parsedAge = parseInt(String(data.age), 10);
+      if (!isNaN(parsedAge) && parsedAge >= 10 && parsedAge <= 120) {
+        validAge = parsedAge;
+      }
+    }
+
+    // Validate gender
+    let validGender: string | null = null;
+    if (typeof data.gender === "string" && data.gender.trim()) {
+      validGender = data.gender.trim();
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: dbUser.id },
       data: {
         name: data.name !== undefined ? data.name : undefined,
+        age: data.age !== undefined ? validAge : undefined,
+        gender: data.gender !== undefined ? validGender : undefined,
         bio: data.bio !== undefined ? data.bio : null,
         company: data.company !== undefined ? data.company : null,
         jobTitle: data.jobTitle !== undefined ? data.jobTitle : null,

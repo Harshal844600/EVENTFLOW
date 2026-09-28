@@ -5,7 +5,7 @@ import { getOrCreateDbUser } from "@/lib/user";
 import { getRazorpayCredentials, getRazorpayClient } from "@/lib/razorpay";
 import { rateLimit, getClientIp } from "@/lib/ratelimit";
 import { logger } from "@/lib/logger";
-import { invalidateLiveFeedCache } from "@/app/api/events/live-feed/route";
+import { invalidateLiveFeedCache } from "@/lib/live-feed-cache";
 
 export async function POST(req: Request) {
   try {

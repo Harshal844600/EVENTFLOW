@@ -109,7 +109,7 @@ export default async function AdminDashboardPage() {
     };
   });
 
-  // 5. Demographics Analysis: Gender & Age Distribution
+  // 5. Demographics Analysis: Gender & Real Age Distribution
   const users = await prisma.user.findMany({
     select: { gender: true, age: true },
   });
@@ -122,11 +122,17 @@ export default async function AdminDashboardPage() {
   };
 
   const ageBrackets: Record<string, number> = {
+    "Under 18": 0,
     "18-24": 0,
     "25-34": 0,
     "35-44": 0,
-    "45+": 0,
+    "45-54": 0,
+    "55+": 0,
   };
+
+  const usersWithAge = users.filter((u) => u.age !== null && u.age !== undefined && u.age > 0);
+  const recordedAgeCount = usersWithAge.length;
+  const totalUsersCount = users.length;
 
   users.forEach((u) => {
     // Gender
@@ -137,19 +143,51 @@ export default async function AdminDashboardPage() {
       genderCounts["Other"]++;
     }
 
-    // Age
-    if (u.age) {
-      if (u.age <= 24) ageBrackets["18-24"]++;
+    // Real Age Categorization
+    if (u.age !== null && u.age !== undefined && u.age > 0) {
+      if (u.age < 18) ageBrackets["Under 18"]++;
+      else if (u.age <= 24) ageBrackets["18-24"]++;
       else if (u.age <= 34) ageBrackets["25-34"]++;
       else if (u.age <= 44) ageBrackets["35-44"]++;
-      else ageBrackets["45+"]++;
-    } else {
-      ageBrackets["25-34"]++; // Default benchmark
+      else if (u.age <= 54) ageBrackets["45-54"]++;
+      else ageBrackets["55+"]++;
     }
   });
 
+  const avgAge =
+    recordedAgeCount > 0
+      ? Math.round(usersWithAge.reduce((sum, u) => sum + (u.age || 0), 0) / recordedAgeCount)
+      : null;
+
+  const minAge = recordedAgeCount > 0 ? Math.min(...usersWithAge.map((u) => u.age!)) : null;
+  const maxAge = recordedAgeCount > 0 ? Math.max(...usersWithAge.map((u) => u.age!)) : null;
+
+  // Exact age frequencies for real age chart
+  const exactAgeCounts: Record<number, number> = {};
+  usersWithAge.forEach((u) => {
+    const a = u.age!;
+    exactAgeCounts[a] = (exactAgeCounts[a] || 0) + 1;
+  });
+  const exactAgeData = Object.entries(exactAgeCounts)
+    .map(([age, count]) => ({ age: Number(age), count }))
+    .sort((a, b) => a.age - b.age);
+
   const genderData = Object.entries(genderCounts).map(([name, value]) => ({ name, value }));
-  const ageData = Object.entries(ageBrackets).map(([bracket, count]) => ({ bracket, count }));
+  const ageData = Object.entries(ageBrackets).map(([bracket, count]) => ({
+    bracket,
+    count,
+    percentage: recordedAgeCount > 0 ? Math.round((count / recordedAgeCount) * 100) : 0,
+  }));
+
+  const ageMetrics = {
+    avgAge,
+    minAge,
+    maxAge,
+    recordedCount: recordedAgeCount,
+    unspecifiedCount: totalUsersCount - recordedAgeCount,
+    totalUsers: totalUsersCount,
+    completionRate: totalUsersCount > 0 ? Math.round((recordedAgeCount / totalUsersCount) * 100) : 0,
+  };
 
   // 6. Recent Activity Feeds
   const [recentBookings, recentLogs] = await Promise.all([
@@ -249,8 +287,13 @@ export default async function AdminDashboardPage() {
       {/* Event-Wise Revenue Generation with Graph Sorting & Performance Table */}
       <EventRevenueAnalytics events={eventPerformanceList} />
 
-      {/* Gender & Age Demographic Breakdown */}
-      <DemographicsChart genderData={genderData} ageData={ageData} />
+      {/* Gender & Real Age Demographic Breakdown */}
+      <DemographicsChart
+        genderData={genderData}
+        ageData={ageData}
+        exactAgeData={exactAgeData}
+        ageMetrics={ageMetrics}
+      />
 
       {/* Recent Activity and Audit Logs */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -1,26 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCachedFeed, setCachedFeed } from "@/lib/live-feed-cache";
 
 export const dynamic = "force-dynamic";
-
-// High-performance server-side in-memory cache
-interface CacheEntry {
-  data: any;
-  expiresAt: number;
-}
-const cacheStore: Map<string, CacheEntry> = new Map();
-const CACHE_TTL_MS = 6_000; // 6 seconds lightweight micro-cache
-
-/**
- * Invalidate the live feed cache when bookings, cancellations, or updates occur
- */
-export function invalidateLiveFeedCache(eventId?: string) {
-  if (eventId) {
-    cacheStore.delete(eventId);
-  }
-  cacheStore.delete("global");
-  cacheStore.clear();
-}
 
 export async function GET(req: Request) {
   try {
@@ -31,9 +13,9 @@ export async function GET(req: Request) {
 
     // Bypass cache if fresh sync requested
     if (!isFreshRequested) {
-      const cached = cacheStore.get(cacheKey);
-      if (cached && Date.now() < cached.expiresAt) {
-        return NextResponse.json(cached.data, {
+      const cached = getCachedFeed(cacheKey);
+      if (cached) {
+        return NextResponse.json(cached, {
           headers: {
             "Cache-Control": "public, s-maxage=5, stale-while-revalidate=10",
             "X-Cache": "HIT",
@@ -116,10 +98,7 @@ export async function GET(req: Request) {
       recentActivity,
     };
 
-    cacheStore.set(cacheKey, {
-      data: payload,
-      expiresAt: Date.now() + CACHE_TTL_MS,
-    });
+    setCachedFeed(cacheKey, payload, 6_000);
 
     return NextResponse.json(payload, {
       headers: {

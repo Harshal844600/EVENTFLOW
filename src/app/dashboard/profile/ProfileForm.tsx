@@ -13,7 +13,11 @@ import {
   Globe, 
   User as UserIcon,
   Save,
-  Loader2
+  Loader2,
+  Calendar,
+  Users,
+  Sparkles,
+  Check
 } from "lucide-react";
 
 // Custom SVG Icons for LinkedIn and GitHub to avoid missing exports in this lucide-react version
@@ -60,6 +64,8 @@ interface ProfileFormProps {
     linkedin: string | null;
     github: string | null;
     website: string | null;
+    gender?: string | null;
+    age?: number | null;
   };
 }
 
@@ -77,6 +83,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     linkedin: user.linkedin || "",
     github: user.github || "",
     website: user.website || "",
+    age: user.age ? String(user.age) : "",
+    gender: user.gender || "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -252,6 +260,170 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             placeholder="Tell us about yourself, your career, and what you are building or looking to connect about..."
             className="w-full bg-background/50 border border-card-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-medium resize-none"
           />
+        </div>
+      </SpotlightCard>
+
+      {/* Spotlight Card: Attendee Demographics & Age Selection */}
+      <SpotlightCard
+        disableTilt={true}
+        className="bg-card-bg/40 backdrop-blur-md border border-card-border/60 rounded-3xl p-6 md:p-8 shadow-xl transition-theme overflow-visible"
+        spotlightColor="rgba(255, 225, 124, 0.15)"
+      >
+        <div className="border-b border-card-border/30 pb-3 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="font-anton text-2xl uppercase tracking-wide text-foreground">
+              Demographics &amp; Attendee Info
+            </h3>
+            <p className="text-xs text-foreground/60 mt-0.5">
+              Powers real-time age distribution graphs and event analytics in the organizer admin portal.
+            </p>
+          </div>
+          <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/25 self-start sm:self-auto">
+            Analytics
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Age Selection Column */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              {renderLabel("age", "Select Age", Calendar)}
+              {formData.age && (
+                <span className="text-[11px] font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                  {formData.age} Years Old
+                </span>
+              )}
+            </div>
+
+            {/* Select Dropdown + Direct Input */}
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <select
+                  id="age-select"
+                  aria-label="Select age from dropdown"
+                  value={formData.age}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, age: e.target.value }))}
+                  onFocus={() => setActiveField("age")}
+                  onBlur={() => setActiveField(null)}
+                  className="w-full bg-background/60 border border-card-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-medium text-foreground cursor-pointer appearance-none"
+                >
+                  <option value="" className="bg-card-bg text-secondary">Select Your Age...</option>
+                  {Array.from({ length: 73 }, (_, i) => i + 18).map((yr) => (
+                    <option key={yr} value={yr} className="bg-card-bg text-foreground">
+                      {yr} years old {yr <= 24 ? "(18-24 Bracket)" : yr <= 34 ? "(25-34 Bracket)" : yr <= 44 ? "(35-44 Bracket)" : yr <= 54 ? "(45-54 Bracket)" : "(55+ Bracket)"}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-secondary">
+                  ▼
+                </div>
+              </div>
+
+              {/* Number Input for Quick Typing */}
+              <div className="w-24">
+                <input
+                  type="number"
+                  min="13"
+                  max="100"
+                  placeholder="Or type"
+                  aria-label="Type age"
+                  value={formData.age}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, age: e.target.value }))}
+                  onFocus={() => setActiveField("age")}
+                  onBlur={() => setActiveField(null)}
+                  className="w-full bg-background/60 border border-card-border rounded-xl px-3 py-3 text-sm text-center focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-mono font-bold text-foreground"
+                />
+              </div>
+            </div>
+
+            {/* Quick Pick Age Chips */}
+            <div>
+              <p className="text-[11px] font-bold text-secondary uppercase tracking-wider mb-2">
+                Quick Select:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[18, 21, 24, 28, 32, 38, 45, 52, 60].map((quickAge) => {
+                  const isSelected = formData.age === String(quickAge);
+                  return (
+                    <button
+                      key={quickAge}
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, age: String(quickAge) }))}
+                      className={`text-xs font-mono font-bold px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-primary text-charcoal border-primary shadow-sm shadow-primary/20 scale-105"
+                          : "bg-background/40 border-card-border text-foreground/80 hover:bg-card-border/40 hover:text-foreground"
+                      }`}
+                    >
+                      {quickAge}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Age Bracket Indicator */}
+            {formData.age && (
+              <div className="p-3 rounded-xl bg-card-bg/60 border border-card-border/80 flex items-center gap-3">
+                <Sparkles className="w-4 h-4 text-primary shrink-0" />
+                <div className="text-xs">
+                  <span className="font-bold text-foreground">
+                    Target Group:{" "}
+                  </span>
+                  <span className="font-semibold text-primary">
+                    {Number(formData.age) < 18
+                      ? "Under 18 (Youth & Student)"
+                      : Number(formData.age) <= 24
+                      ? "18-24 (Gen Z / Young Adult)"
+                      : Number(formData.age) <= 34
+                      ? "25-34 (Early-to-Mid Career Professional)"
+                      : Number(formData.age) <= 44
+                      ? "35-44 (Experienced Lead & Manager)"
+                      : Number(formData.age) <= 54
+                      ? "45-54 (Senior Specialist & Executive)"
+                      : "55+ (Industry Veteran)"}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Gender Selection Column */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              {renderLabel("gender", "Gender Identity", Users, "text-blue-400")}
+              {formData.gender && (
+                <span className="text-[11px] font-mono font-bold text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full border border-blue-400/20">
+                  {formData.gender}
+                </span>
+              )}
+            </div>
+
+            <p className="text-xs text-foreground/60 leading-relaxed">
+              Select your gender identity to assist event organizers with inclusive demographic metrics.
+            </p>
+
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
+              {["Male", "Female", "Non-Binary", "Other", "Prefer not to say"].map((option) => {
+                const isSelected = formData.gender === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, gender: option }))}
+                    className={`flex items-center justify-between p-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-primary/15 border-primary text-foreground font-bold shadow-sm"
+                        : "bg-background/40 border-card-border text-foreground/70 hover:bg-card-border/40 hover:text-foreground"
+                    }`}
+                  >
+                    <span>{option}</span>
+                    {isSelected && <Check className="w-4 h-4 text-primary" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </SpotlightCard>
 
