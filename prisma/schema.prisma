@@ -43,10 +43,13 @@ model User {
   linkedin     String?
   github       String?
   website      String?
+  gender       String?
+  age          Int?
   createdAt    DateTime   @default(now())
 
   eventsCreated Event[]    @relation("EventCreator")
   bookings      Booking[]
+  waitlists     Waitlist[]
   adminLogs     AdminLog[]
 }
 
@@ -68,20 +71,25 @@ model Event {
   aiGeneratedDescription Boolean     @default(false)
   createdAt              DateTime    @default(now())
 
-  bookings Booking[]
+  bookings  Booking[]
+  waitlists Waitlist[]
 
   @@index([status])
 }
 
 model Booking {
-  id          String        @id @default(uuid())
-  eventId     String
-  userId      String
-  quantity    Int
-  totalAmount Decimal       @db.Decimal(10, 2)
-  status      BookingStatus
-  qrCodeUrl   String?
-  createdAt   DateTime      @default(now())
+  id                 String        @id @default(uuid())
+  eventId            String
+  userId             String
+  quantity           Int
+  totalAmount        Decimal       @db.Decimal(10, 2)
+  status             BookingStatus
+  qrCodeUrl          String?
+  cancellationReason String?
+  cancelledAt        DateTime?
+  refundStatus       String?       @default("NONE")
+  refundAmount       Decimal?      @db.Decimal(10, 2)
+  createdAt          DateTime      @default(now())
 
   event   Event     @relation(fields: [eventId], references: [id])
   user    User      @relation(fields: [userId], references: [id])
@@ -91,12 +99,31 @@ model Booking {
   @@index([userId])
 }
 
+model Waitlist {
+  id        String   @id @default(uuid())
+  eventId   String
+  userId    String
+  position  Int
+  status    String   @default("WAITING") // WAITING, OFFERED, CONVERTED, CANCELLED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([eventId, status])
+  @@index([userId])
+}
+
 model Payment {
   id                String        @id @default(uuid())
   bookingId         String
   razorpayOrderId   String
   razorpayPaymentId String?
   razorpaySignature String?
+  refundId          String?
+  refundStatus      String?
   amount            Decimal       @db.Decimal(10, 2)
   status            PaymentStatus
   createdAt         DateTime      @default(now())

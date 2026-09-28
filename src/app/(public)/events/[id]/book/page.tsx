@@ -19,6 +19,16 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
   const [reservationTime, setReservationTime] = useState(600); // 10 minute countdown timer
 
   const [gatewayNotice, setGatewayNotice] = useState<{ title: string; message: string } | null>(null);
+  const [waitlistStatus, setWaitlistStatus] = useState<{
+    isEnrolled: boolean;
+    position: number | null;
+    totalWaiting: number;
+  }>({
+    isEnrolled: false,
+    position: null,
+    totalWaiting: 0,
+  });
+  const [joiningWaitlist, setJoiningWaitlist] = useState(false);
 
   // 10-minute ticket reservation countdown timer
   useEffect(() => {
@@ -48,6 +58,20 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
         console.error("Error fetching event:", err);
         toast.error("Failed to load event details");
       });
+
+    // Check waitlist status
+    fetch(`/api/waitlist?eventId=${id}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          setWaitlistStatus({
+            isEnrolled: data.isEnrolled,
+            position: data.entry?.position || null,
+            totalWaiting: data.totalWaiting || 0,
+          });
+        }
+      })
+      .catch(() => {});
   }, [id]);
 
   // Real-time seat updates
@@ -191,6 +215,40 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       console.error(error);
       toast.error("Network error while connecting to payment gateway");
       setLoading(false);
+    }
+  };
+
+  const handleJoinWaitlist = async () => {
+    if (!user) {
+      toast.error("Please sign in to join the waiting queue");
+      router.push(`/auth/user/login?redirect_url=/events/${id}/book`);
+      return;
+    }
+
+    setJoiningWaitlist(true);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId: id }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to join waiting queue");
+        return;
+      }
+
+      toast.success(data.message || "You've been added to the waiting queue!");
+      setWaitlistStatus({
+        isEnrolled: true,
+        position: data.position,
+        totalWaiting: (waitlistStatus.totalWaiting || 0) + 1,
+      });
+    } catch {
+      toast.error("Network error while joining queue.");
+    } finally {
+      setJoiningWaitlist(false);
     }
   };
 
@@ -405,27 +463,61 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
               </div>
             )}
 
-            {/* Checkout CTA */}
+            {/* Checkout CTA / Waiting Queue Action */}
             <div className="pt-2">
-              <button
-                type="button"
-                onClick={handleBooking}
-                disabled={loading || isSoldOut}
-                className="w-full bg-primary text-charcoal py-4 rounded-xl font-anton text-lg tracking-wide uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer duration-300"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="w-5 h-5 border-2 border-charcoal border-t-transparent rounded-full animate-spin" />
-                    <span>Confirming Ticket...</span>
-                  </span>
-                ) : isSoldOut ? (
-                  "Event Sold Out"
-                ) : total === 0 ? (
-                  "Confirm Free Ticket"
-                ) : (
-                  `Pay ₹${total.toFixed(2)} • Secure Checkout`
-                )}
-              </button>
+              {isSoldOut ? (
+                <div className="space-y-3">
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-foreground space-y-2">
+                    <div className="flex items-center gap-2 text-amber-500 font-bold text-xs uppercase tracking-wider">
+                      <Sparkles className="w-4 h-4 shrink-0" />
+                      <span>Live Waiting Queue Active</span>
+                    </div>
+                    <p className="text-xs text-foreground/80 leading-relaxed">
+                      {waitlistStatus.isEnrolled
+                        ? `🎉 You are currently #${waitlistStatus.position} in line! When an attendee cancels their ticket, seats are offered in queue order.`
+                        : `This event is fully booked, but tickets frequently open up from attendee cancellations. Join the waiting queue to secure the next available pass.`}
+                    </p>
+                  </div>
+
+                  {waitlistStatus.isEnrolled ? (
+                    <Link
+                      href="/dashboard/bookings"
+                      className="w-full inline-flex items-center justify-center gap-2 bg-foreground text-background py-4 rounded-xl font-anton text-sm uppercase tracking-wider hover:opacity-90 transition-opacity"
+                    >
+                      <span>Track in My Queues (Position #{waitlistStatus.position}) &rarr;</span>
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleJoinWaitlist}
+                      disabled={joiningWaitlist}
+                      className="w-full bg-primary text-black py-4 rounded-xl font-anton text-base uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 disabled:opacity-50 cursor-pointer"
+                    >
+                      {joiningWaitlist
+                        ? "Entering Queue..."
+                        : `Join Waiting Queue (Position #${waitlistStatus.totalWaiting + 1})`}
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleBooking}
+                  disabled={loading}
+                  className="w-full bg-primary text-charcoal py-4 rounded-xl font-anton text-lg tracking-wide uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer duration-300"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-5 h-5 border-2 border-charcoal border-t-transparent rounded-full animate-spin" />
+                      <span>Confirming Ticket...</span>
+                    </span>
+                  ) : total === 0 ? (
+                    "Confirm Free Ticket"
+                  ) : (
+                    `Pay ₹${total.toFixed(2)} • Secure Checkout`
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
