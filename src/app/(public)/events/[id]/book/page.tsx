@@ -18,6 +18,8 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
   const [liveSeatsRemaining, setLiveSeatsRemaining] = useState<number | null>(null);
   const [reservationTime, setReservationTime] = useState(600); // 10 minute countdown timer
 
+  const [gatewayNotice, setGatewayNotice] = useState<{ title: string; message: string } | null>(null);
+
   // 10-minute ticket reservation countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
@@ -74,6 +76,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       return;
     }
 
+    setGatewayNotice(null);
     setLoading(true);
     try {
       const res = await fetch("/api/bookings", {
@@ -91,6 +94,16 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
           setLoading(false);
           return;
         }
+
+        if (data.isGatewayError || res.status === 502) {
+          setGatewayNotice({
+            title: "Online Payment Verification Notice",
+            message:
+              data.details ||
+              "The payment gateway for this organizer is currently undergoing merchant verification or maintenance. Please contact our support team to confirm your seat.",
+          });
+        }
+
         toast.error(data.error || "Booking request could not be processed");
         setLoading(false);
         return;
@@ -157,7 +170,19 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
       const rzp = new (window as any).Razorpay(options);
 
       rzp.on("payment.failed", function (response: any) {
-        toast.error(`Payment failed: ${response.error.description}`);
+        const errorDesc = response?.error?.description || "Payment failed or cancelled";
+        toast.error(`Payment failed: ${errorDesc}`);
+        if (
+          errorDesc.toLowerCase().includes("merchant") ||
+          errorDesc.toLowerCase().includes("category") ||
+          errorDesc.toLowerCase().includes("inactive")
+        ) {
+          setGatewayNotice({
+            title: "Gateway Verification in Progress",
+            message:
+              "Our payment processing partner is verifying this organizer's merchant status. Please reach out to our support team for immediate reservation assistance.",
+          });
+        }
         setLoading(false);
       });
 
@@ -352,6 +377,34 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
               </span>
             </div>
 
+            {/* Gateway Notice if verification/error occurs */}
+            {gatewayNotice && (
+              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-foreground space-y-2">
+                <div className="flex items-center gap-2 text-amber-500 font-bold text-xs uppercase tracking-wider">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{gatewayNotice.title}</span>
+                </div>
+                <p className="text-xs text-foreground/80 leading-relaxed">
+                  {gatewayNotice.message}
+                </p>
+                <div className="flex items-center gap-3 pt-1">
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center text-xs font-bold text-primary underline hover:text-primary/80"
+                  >
+                    Contact Support &rarr;
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setGatewayNotice(null)}
+                    className="text-xs text-secondary hover:text-foreground transition-colors ml-auto"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Checkout CTA */}
             <div className="pt-2">
               <button
@@ -370,7 +423,7 @@ export default function BookEventPage({ params }: { params: Promise<{ id: string
                 ) : total === 0 ? (
                   "Confirm Free Ticket"
                 ) : (
-                  `Pay ₹${total.toFixed(2)} with Razorpay`
+                  `Pay ₹${total.toFixed(2)} • Secure Checkout`
                 )}
               </button>
             </div>

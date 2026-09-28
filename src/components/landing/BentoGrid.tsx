@@ -121,7 +121,7 @@ export function BentoGrid() {
                 Secure<br />Payments
               </h3>
               <p className="text-foreground/70 font-medium">
-                Frictionless checkout powered by Razorpay.
+                Instant UPI, Card &amp; Netbanking checkout with bank-grade encryption.
               </p>
             </div>
             <div className="absolute -bottom-12 -right-4 w-40 h-40 bg-secondary/10 rounded-full blur-3xl group-hover:bg-secondary/30 transition-all duration-500 delay-200"></div>

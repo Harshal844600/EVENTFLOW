@@ -58,7 +58,7 @@ export function Footer() {
           {/* Quick Navigation */}
           <div>
             <h4 className="font-anton text-lg uppercase tracking-wider mb-6 text-foreground">Explore</h4>
-            <ul className="space-y-4 font-bold text-sm">
+            <ul className="space-y-3 font-bold text-sm">
               <li>
                 <Link href="/events" className="text-foreground/70 hover:text-primary transition-colors">
                   Upcoming Events
@@ -70,6 +70,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/contact" className="text-foreground/70 hover:text-primary transition-colors">
+                  Contact &amp; Support
+                </Link>
+              </li>
+              <li>
                 <Link href="/dashboard" className="text-foreground/70 hover:text-primary transition-colors">
                   User Dashboard
                 </Link>
@@ -77,35 +82,42 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Newsletter subscription */}
-          <div className="space-y-6">
-            <h4 className="font-anton text-lg uppercase tracking-wider text-foreground">Newsletter</h4>
-            <p className="text-sm text-foreground/70">
-              Subscribe to stay updated with new event drops.
-            </p>
-            <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
-              <input
-                type="email"
-                placeholder="Enter email address"
-                className="w-full bg-background border border-card-border px-4 py-3 rounded-xl text-sm font-medium outline-none focus:border-primary transition-colors"
-                required
-              />
-              <button
-                type="submit"
-                className="w-full bg-inverted-bg text-inverted-text hover:bg-primary hover:text-foreground transition-colors py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:scale-[1.02] active:scale-[0.98] duration-300"
-              >
-                Subscribe
-              </button>
-            </form>
+          {/* Legal & Compliance (Required for Payment Gateway) */}
+          <div>
+            <h4 className="font-anton text-lg uppercase tracking-wider mb-6 text-foreground">Policies</h4>
+            <ul className="space-y-3 font-bold text-sm">
+              <li>
+                <Link href="/terms" className="text-foreground/70 hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="text-foreground/70 hover:text-primary transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund" className="text-foreground/70 hover:text-primary transition-colors">
+                  Refund &amp; Cancellation
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-foreground/70 hover:text-primary transition-colors">
+                  Grievance Desk
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 
         {/* Lower footer copyright */}
         <div className="border-t border-card-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-foreground/60 space-y-4 md:space-y-0">
-          <p>© {currentYear} EventFlow. All rights reserved.</p>
-          <div className="flex space-x-6 font-bold">
-            <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+          <p>© {currentYear} EventFlow Platform. All rights reserved.</p>
+          <div className="flex flex-wrap gap-4 sm:gap-6 font-bold">
+            <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+            <Link href="/refund" className="hover:text-primary transition-colors">Cancellation &amp; Refund</Link>
+            <Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
           </div>
         </div>
       </div>

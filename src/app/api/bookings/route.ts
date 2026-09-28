@@ -165,6 +165,28 @@ export async function POST(req: Request) {
     }
 
     logger.error("POST /api/bookings unexpected error", error);
+    
+    // Check if error is from payment gateway / Razorpay
+    const gatewayDescription = error?.error?.description || "";
+    const isGatewayIssue = 
+      error?.statusCode === 400 || 
+      error?.statusCode === 401 ||
+      error?.error?.code === "BAD_REQUEST_ERROR" ||
+      gatewayDescription.toLowerCase().includes("account") ||
+      gatewayDescription.toLowerCase().includes("inactive") ||
+      gatewayDescription.toLowerCase().includes("merchant");
+
+    if (isGatewayIssue) {
+      return NextResponse.json(
+        {
+          error: gatewayDescription || "Payment gateway is currently undergoing merchant verification or maintenance.",
+          isGatewayError: true,
+          details: "Our payment processing partner is verifying this organizer's merchant credentials. Please contact support.",
+        },
+        { status: 502 }
+      );
+    }
+
     const message =
       error?.error?.description ||
       error?.message ||
