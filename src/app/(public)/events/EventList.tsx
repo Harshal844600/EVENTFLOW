@@ -192,23 +192,25 @@ export function EventList({ events }: { events: any[] }) {
         </div>
 
         {/* Categories Bar */}
-        <div className="flex overflow-x-auto no-scrollbar sm:flex-wrap gap-2 sm:justify-center pb-2 px-2">
-          {categories.map((category) => {
-            const isActive = selectedCategory === category;
-            return (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`shrink-0 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border ${
-                  isActive
-                    ? "bg-primary text-black border-primary shadow-md shadow-primary/20 scale-105"
-                    : "bg-card-bg/40 text-foreground/80 border-card-border/60 hover:bg-card-bg hover:text-foreground"
-                }`}
-              >
-                {category}
-              </button>
-            );
-          })}
+        <div className="relative">
+          <div className="flex overflow-x-auto no-scrollbar sm:flex-wrap gap-2 pb-2 px-1 scroll-smooth snap-x touch-pan-x">
+            {categories.map((category) => {
+              const isActive = selectedCategory === category;
+              return (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`shrink-0 snap-start px-4 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 border active:scale-95 min-h-[38px] ${
+                    isActive
+                      ? "bg-primary text-black border-primary shadow-md shadow-primary/20 scale-105"
+                      : "bg-card-bg/50 text-foreground/80 border-card-border/60 hover:bg-card-bg hover:text-foreground"
+                  }`}
+                >
+                  {category}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Secondary Filter Controls: Status, Type, and Sorting */}
@@ -378,9 +380,9 @@ export function EventList({ events }: { events: any[] }) {
                       </div>
 
                       {/* Content Card Body */}
-                      <div className="p-6 flex flex-col flex-1 justify-between">
+                      <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between">
                         <div>
-                          <h3 className="font-anton text-2xl sm:text-3xl uppercase leading-tight mb-3 group-hover:text-primary transition-colors tracking-wide line-clamp-1">
+                          <h3 className="font-anton text-xl sm:text-3xl uppercase leading-tight mb-3 group-hover:text-primary transition-colors tracking-wide line-clamp-2">
                             {event.title}
                           </h3>
 

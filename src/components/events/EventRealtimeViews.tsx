@@ -127,18 +127,18 @@ export function EventRealtimeViews({
 
   if (compact) {
     return (
-      <div className={`inline-flex items-center gap-2 text-xs font-medium ${className}`}>
-        <span className="relative flex h-2 w-2">
+      <div className={`inline-flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-medium ${className}`}>
+        <span className="relative flex h-2 w-2 shrink-0">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
         <span className="text-secondary font-mono">
-          {activeViewers} active {activeViewers === 1 ? "viewer" : "viewers"}
+          {activeViewers} viewing now
         </span>
         {totalViews > 0 && (
           <>
             <span className="text-secondary/40">•</span>
-            <span className="text-secondary/80 font-mono">{totalViews} views</span>
+            <span className="text-secondary/80 font-mono">{totalViews.toLocaleString()} views</span>
           </>
         )}
       </div>

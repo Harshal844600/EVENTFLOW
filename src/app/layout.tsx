@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { LiveBookingToast } from "@/components/LiveBookingToast";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -60,6 +61,7 @@ export default function RootLayout({
             </SmoothScroll>
             <Toaster position="bottom-right" theme="system" richColors />
             <LiveBookingToast />
+            <MobileBottomNav />
           </ThemeProvider>
         </body>
       </html>

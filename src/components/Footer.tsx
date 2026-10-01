@@ -8,8 +8,8 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-card-border bg-background/50 backdrop-blur-sm mt-32 relative z-20">
-      <div className="max-w-7xl mx-auto px-8 py-16">
+    <footer className="border-t border-card-border bg-background/50 backdrop-blur-sm mt-20 sm:mt-32 relative z-20 pb-28 lg:pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Logo & Slogan */}
           <div className="md:col-span-2 space-y-6">

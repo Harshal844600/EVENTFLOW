@@ -37,7 +37,7 @@ export default async function PublicEventDetailPage({ params }: { params: Promis
   const percentBooked = Math.min(100, Math.round((event.seatsBooked / event.capacity) * 100));
 
   return (
-    <div className="space-y-8 py-4 sm:py-6 pb-32 lg:pb-12 max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="space-y-6 sm:space-y-8 pb-32 lg:pb-12 max-w-7xl mx-auto">
       {/* Top Header Bar: Back Nav & Share */}
       <div className="flex items-center justify-between gap-4">
         <Link 
