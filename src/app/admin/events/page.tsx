@@ -33,13 +33,14 @@ export default async function AdminEventsPage() {
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4">Date</th>
               <th className="px-6 py-4">Capacity</th>
+              <th className="px-6 py-4">Views</th>
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-card-border">
             {events.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-secondary">
+                <td colSpan={6} className="px-6 py-8 text-center text-secondary">
                   No events found. Create your first one!
                 </td>
               </tr>
@@ -65,6 +66,11 @@ export default async function AdminEventsPage() {
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-sm">{event.seatsBooked} / {event.capacity}</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-mono text-sm font-semibold text-foreground">
+                      {(event.views || 0).toLocaleString()}
+                    </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end space-x-3.5">

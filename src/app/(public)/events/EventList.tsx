@@ -13,9 +13,11 @@ import {
   CheckCircle2, 
   Sparkles, 
   Hourglass,
-  ArrowUpDown
+  ArrowUpDown,
+  Eye
 } from "lucide-react";
 import { SpotlightCard } from "@/components/SpotlightCard";
+import { EventShareButton } from "@/components/events/EventShareButton";
 
 function FormattedDate({ date }: { date: string }) {
   const [mounted, setMounted] = useState(false);
@@ -357,6 +359,11 @@ export function EventList({ events }: { events: any[] }) {
                                 Free
                               </span>
                             )}
+                            <EventShareButton
+                              title={event.title}
+                              eventId={event.id}
+                              variant="icon"
+                            />
                           </div>
                         </div>
 
@@ -421,6 +428,12 @@ export function EventList({ events }: { events: any[] }) {
                             <p className="font-bold text-foreground text-xs sm:text-sm">
                               <FormattedDate date={event.startTime} />
                             </p>
+                            {typeof event.views === "number" && event.views > 0 && (
+                              <p className="text-[11px] text-secondary flex items-center gap-1 font-mono mt-1">
+                                <Eye className="w-3 h-3 opacity-70" />
+                                <span>{event.views.toLocaleString()} views</span>
+                              </p>
+                            )}
                           </div>
                           <div className="text-right">
                             <p className="font-anton text-2xl text-foreground tracking-tight">

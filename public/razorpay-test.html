@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Razorpay Test</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body style="background:#111;color:#fff;font-family:sans-serif;padding:40px;text-align:center;">
+  <h2>Razorpay Real Integration Test</h2>
+  <button id="pay-btn" style="padding:15px 30px;background:#ffe17c;color:#111;font-weight:bold;border:none;border-radius:12px;font-size:16px;cursor:pointer;">
+    Open Razorpay Modal
+  </button>
+  <div id="output" style="margin-top:20px;font-family:monospace;"></div>
+
+  <script>
+    document.getElementById('pay-btn').onclick = function() {
+      const options = {
+        key: 'rzp_test_TgYGsBQUXcyijC',
+        amount: 50000, // 500 INR
+        currency: 'INR',
+        name: 'EventFlow',
+        description: 'Test Event Ticket',
+        handler: function(response) {
+          document.getElementById('output').innerText = 'Payment Success: ' + JSON.stringify(response);
+        },
+        prefill: {
+          name: 'Harshal Test',
+          email: 'test@eventflow.dev'
+        },
+        theme: {
+          color: '#ffe17c'
+        },
+        modal: {
+          ondismiss: function() {
+            document.getElementById('output').innerText = 'Payment Modal Dismissed / Cancelled';
+          }
+        }
+      };
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function(resp) {
+        document.getElementById('output').innerText = 'Payment Failed: ' + JSON.stringify(resp);
+      });
+      rzp.open();
+    };
+  </script>
+</body>
+</html>
